@@ -1,3 +1,3 @@
 # Projeto 2 ano
 
-[db](https://www.github.com/Db-Dev2002)
+[Diogo Bernardo](https://www.github.com/Db-Dev2002)

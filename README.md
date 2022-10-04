@@ -1,5 +1,8 @@
-# Projeto 2 ano
+# Projeto 2 ano!
 
+# Ginásio académico.
+
+## Autores:
 [Diogo Bernardo](https://www.github.com/Db-Dev2002) a21144@alunos.ipca.pt
 
 

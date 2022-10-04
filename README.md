@@ -5,10 +5,9 @@
 ## Autores:
 [Diogo Bernardo](https://www.github.com/Db-Dev2002) a21144@alunos.ipca.pt
 
+## Smart Campos – Mobilidade
 
-Smart Campos – Mobilidade
-
-Introdução: 
+### Introdução: 
 
 Pretendemos com este trabalho implementar uma base de dados que nos permita gerir os dados, de uma forma automatizada e objetiva, para o tema que nos foi proposto “Smart Campus”, em específico pretendemos um “Ginásio académico”.
 

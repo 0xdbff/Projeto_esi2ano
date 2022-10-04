@@ -5,7 +5,7 @@
 ## Autores:
 [Diogo Bernardo](https://www.github.com/Db-Dev2002) a21144@alunos.ipca.pt
 
-## Smart Campos – Mobilidade
+## Smart Campus – Mobilidade
 
 ### Introdução: 
 

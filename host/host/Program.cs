@@ -2,6 +2,6 @@
 {
     private static void Main(string[] args)
     {
-        System.Console.WriteLine("HI");
+        System.Console.WriteLine("HI")
     }
 }

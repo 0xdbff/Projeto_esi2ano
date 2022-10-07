@@ -5,6 +5,8 @@
 ## Autores:
 [Diogo Bernardo](https://www.github.com/Db-Dev2002) a21144@alunos.ipca.pt
 
+[João Ribeiro](https://github.com/joaaribeiro04) a23795@alunos.ipca.pt
+
 ## Smart Campus – Mobilidade
 
 ### Introdução: 

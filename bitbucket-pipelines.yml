@@ -28,7 +28,7 @@ pipelines:
               - dotnetcore
             script:
               - cd host
-              - export SOLUTION_NAME=HelloProject
+              - export SOLUTION_NAME=host
               - export REPORTS_PATH=linter-reports
               - dotnet new tool-manifest
               - dotnet tool install JetBrains.ReSharper.GlobalTools

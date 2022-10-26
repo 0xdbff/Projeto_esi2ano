@@ -1,6 +1,6 @@
 ﻿using Npgsql;
 
-var connString = "Host=localhost:5432;Username=admin;Password=S$0m*Pa$$Wor|d!;Database=testdb";
+var connString = "Host=localhost:5432;Username=postgres;Password=IpcaGymPa$$word!;Database=testdb";
 
 await using var conn = new NpgsqlConnection(connString);
 await conn.OpenAsync();
@@ -8,7 +8,7 @@ await conn.OpenAsync();
 // Insert some data
 await using (var cmd = new NpgsqlCommand("INSERT INTO test (name) VALUES ($1)", conn))
 {
-    cmd.Parameters.AddWithValue("Test nas Bd");
+    cmd.Parameters.AddWithValue("...");
     await cmd.ExecuteNonQueryAsync();
 }
 

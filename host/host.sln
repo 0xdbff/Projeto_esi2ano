@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1704.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "host", "host\host.csproj", "{5B8D6796-11D8-4952-B8E8-B92BD427F4AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpcaGym", "IpcaGym\IpcaGym.csproj", "{5B8D6796-11D8-4952-B8E8-B92BD427F4AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

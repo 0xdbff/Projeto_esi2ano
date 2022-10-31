@@ -1,11 +1,19 @@
-using System.ComponentModel;
 using Npgsql;
 
 namespace host;
 
 internal class DataBase
 {
-    #region default_values
+    /// <summary>
+    ///     Connection String to system database (currently using postgres 14+).
+    ///     Any Changes to the Database connection rules will require a new
+    ///     binary file with updated values as this constants are not intended
+    ///     to change during runtime.
+    /// </summary>
+    private const string ConnString =
+        $"Server={Host};Username={User};Database={DbName};Port={Port};Password={PassWord};SSLMode=Prefer";
+
+    #region connection_rules
 
     /// <summary> Hostname for postgresql server. </summary>
     private const string Host = "localhost";
@@ -17,50 +25,47 @@ internal class DataBase
     private const string DbName = "testdb";
 
     /// <summary>
-    /// Password for postgresql server (needless to say, protect this src code file as well as the generated bin).
+    ///     Password for postgresql server (needless to say, protect this src
+    ///     file as well as the generated code).
     /// </summary>
     private const string PassWord = "IpcaGymPa$$word!";
 
-    /// <summary> Network Port for postgresql server, other ports may be blocked... </summary>
+    /// <summary>
+    ///     Network Port for postgresql server, other ports may be blocked...
+    /// </summary>
     private const string Port = "5432";
 
     #endregion
-    
-    /// <summary>
-    /// Connection String to system database (currently using postgres 14+).
-    ///
-    /// Any Changes to the Database connection rules will require a new binary file with updated default_values
-    /// as this constants are not intended to change during runtime.
-    /// </summary>
-    private const string ConnString =
-        $"Server={Host};Username={User};Database={DbName};Port={Port};Password={PassWord};SSLMode=Prefer";
+
+    #region methods
 
     /// <summary>
-    /// Initialize a database connection.
-    /// 
-    /// Connections must be disposed when they are no longer needed - not doing so can result
-    /// in a connection leak, which can crash your program, this is done via the await using C# construct,
-    /// which ensures the connection is disposed even if an exception is later thrown
+    ///     Initialize a database connection.
+    ///     Connections must be disposed when they are no longer needed - not
+    ///     doing so can result in a connection leak, which can crash your
+    ///     program, this is done via the await using C# construct, which ensures
+    ///     that the connection is disposed even if an exception is later thrown.
     /// </summary>
     /// <returns></returns>
     internal static async Task Add()
     {
         await using var conn = new NpgsqlConnection(ConnString);
-        
+
         await conn.OpenAsync();
-        
-        await using var cmd1 = new NpgsqlCommand("INSERT INTO test (name) VALUES ($1)", conn);
-        
+
+        await using var cmd1 =
+            new NpgsqlCommand("INSERT INTO test (name) VALUES ($1)", conn);
+
         cmd1.Parameters.AddWithValue("...");
         await cmd1.ExecuteNonQueryAsync();
-        
+
         await using var cmd = new NpgsqlCommand("SELECT name FROM test", conn);
         await using var reader = await cmd.ExecuteReaderAsync();
-        
+
         while (await reader.ReadAsync())
             Console.WriteLine(reader.GetString(0));
     }
-    
+
     internal static async Task Read()
     {
         await using var conn = new NpgsqlConnection(ConnString);
@@ -68,7 +73,7 @@ internal class DataBase
 
         await using var cmd = new NpgsqlCommand("SELECT name FROM test", conn);
         await using var reader = await cmd.ExecuteReaderAsync();
-        
+
         while (await reader.ReadAsync())
             Console.WriteLine(reader.GetString(0));
     }
@@ -78,4 +83,6 @@ internal class DataBase
         await Add();
         await Read();
     }
+
+    #endregion
 }

@@ -6,7 +6,4 @@ public class Gym
     private uint _numFuncionarios { get; set; }
     private uint _LotacaoTotal { get; set; }
     public uint LotacaoTotal { get; set; }  
-
-
-
 }

@@ -63,26 +63,48 @@ internal static class DataBase
     /// <summary>
     ///
     /// </summary>
-    internal static async Task<List<Object>> GetTable(string? tableName)
+    internal static async Task<List<List<object>>?> GetAll(string? tableName)
     {
-        await using var conn = new NpgsqlConnection(ConnString);
-        await conn.OpenAsync();
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
 
-        await using var cmd = new NpgsqlCommand($"SELECT * FROM {tableName}", conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
+            await using var cmd =
+                new NpgsqlCommand($"SELECT * FROM {tableName}", conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
 
-        // A generic list to hold all the values from the table fields.
-        var fieldList = new List<Object>();
+            // A generic list to hold all the lines from the Table.
+            var tableList = new List<List<object>>();
 
-        // Read every value with it's matching type, and add it to the list.
-        while (await reader.ReadAsync())
-            fieldList.Add($"{reader.GetValue(2)}");
+            // Read every value with it's matching type, add it to the field list
+            // and in the outer loop to the table list.
+            while (await reader.ReadAsync())
+            {
+                // A generic list to hold all the columns from the Table.
+                var fieldList = new List<object>();
 
-        return fieldList;
+                for (var val = 0; val < reader.FieldCount; val++)
+                    fieldList.Add(reader.GetValue(val));
+
+                tableList.Add(fieldList);
+            }
+
+            return tableList;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return default;
+        }
     }
 
     internal static async Task<Object> Get(string? tableName, int pos)
     {
+        // Open a connection that will live through the execution of this method's
+        // stack frame.
         await using var conn = new NpgsqlConnection(ConnString);
         await conn.OpenAsync();
 
@@ -95,15 +117,25 @@ internal static class DataBase
         return reader.GetValue(pos);
     }
 
-    public static async Task test()
+    public static async Task Test()
     {
-        // await Insert("COMPANY VALUES (1, 'Paul', 32, 'California', 20000.00)");
-
-        var l = await GetTable("COMPANY");
-
-        foreach (var val in l)
+        try
         {
-            Console.WriteLine($"{val}");
+            await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
+        }
+        catch
+        {
+            Console.WriteLine("Cannnot Insert duplicated Key");
+        }
+
+        var l = await GetAll("COMPANY");
+
+        foreach (var line in l)
+        {
+            foreach (var collum in line)
+            {
+                Console.WriteLine($"{collum}");
+            }
         }
 
         // var val2 = await Get("test", 0);

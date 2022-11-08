@@ -9,12 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="Npgsql"/>
-        <None Remove="Npgsql.EntityFrameworkCore.PostgreSQL"/>
-        <None Remove="Microsoft.EntityFrameworkCore.Tools"/>
+        <None Remove="Npgsql" />
+        <None Remove="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <None Remove="Microsoft.EntityFrameworkCore.Tools" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Npgsql" Version="6.0.7"/>
+        <PackageReference Include="NLog" Version="5.0.5" />
+        <PackageReference Include="Npgsql" Version="6.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>

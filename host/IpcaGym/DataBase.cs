@@ -73,7 +73,7 @@ internal static class DataBase
             await conn.OpenAsync();
 
             await using var cmd =
-                new NpgsqlCommand($"SELECT * FROM {tableName}", conn);
+                new NpgsqlCommand($"SELECT * FROM {tableName}2", conn);
             await using var reader = await cmd.ExecuteReaderAsync();
 
             // A generic list to hold all the lines from the Table.
@@ -121,26 +121,17 @@ internal static class DataBase
     {
         try
         {
-            await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
-        }
-        catch
-        {
-            Console.WriteLine("Cannnot Insert duplicated Key");
-        }
-
-        var l = await GetAll("COMPANY");
-
-        foreach (var line in l)
-        {
-            foreach (var collum in line)
+            // await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
+            var table = await GetAll("COMPANY");
+            foreach (var collum in from line in table from collum in line select collum)
             {
                 Console.WriteLine($"{collum}");
             }
         }
-
-        // var val2 = await Get("test", 0);
-        //
-        // Console.WriteLine(val2);
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     #endregion

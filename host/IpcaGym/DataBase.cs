@@ -4,6 +4,9 @@ namespace host;
 
 internal static class DataBase
 {
+    private static readonly NLog.Logger _log =
+        NLog.LogManager.GetCurrentClassLogger();
+
     /// <summary>
     ///     Connection String to system database (currently using postgres 14+).
     ///     Any Change to the Database connection rules will require a new
@@ -51,13 +54,21 @@ internal static class DataBase
     /// </returns>
     internal static async Task<int> Insert(string? sql)
     {
-        await using var conn = new NpgsqlConnection(ConnString);
-        await conn.OpenAsync();
+        try
+        {
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
 
-        // @ allows escape characters.
-        await using var cmd = new NpgsqlCommand($"INSERT INTO {sql}", conn);
+            // @ allows escape characters.
+            await using var cmd = new NpgsqlCommand($@"INSERT INTO {sql}", conn);
 
-        return (await cmd.ExecuteNonQueryAsync());
+            return (await cmd.ExecuteNonQueryAsync());
+        }
+        catch (Exception e)
+        {
+            _log.Error(e);
+            return default;
+        }
     }
 
     /// <summary>
@@ -73,7 +84,7 @@ internal static class DataBase
             await conn.OpenAsync();
 
             await using var cmd =
-                new NpgsqlCommand($"SELECT * FROM {tableName}2", conn);
+                new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
             await using var reader = await cmd.ExecuteReaderAsync();
 
             // A generic list to hold all the lines from the Table.
@@ -86,8 +97,9 @@ internal static class DataBase
                 // A generic list to hold all the columns from the Table.
                 var fieldList = new List<object>();
 
-                for (var val = 0; val < reader.FieldCount; val++)
-                    fieldList.Add(reader.GetValue(val));
+                for (var currentField = 0; currentField < reader.FieldCount;
+                     currentField++)
+                    fieldList.Add(reader.GetValue(currentField));
 
                 tableList.Add(fieldList);
             }
@@ -96,25 +108,34 @@ internal static class DataBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _log.Error(e);
             return default;
         }
     }
 
-    internal static async Task<Object> Get(string? tableName, int pos)
+    internal static async Task<object?> Get(string? tableName, int collumn)
     {
-        // Open a connection that will live through the execution of this method's
-        // stack frame.
-        await using var conn = new NpgsqlConnection(ConnString);
-        await conn.OpenAsync();
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
 
-        await using var cmd = new NpgsqlCommand($"SELECT * FROM {tableName}", conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
+            await using var cmd =
+                new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
 
-        var a = reader.FieldCount;
+            var a = reader.FieldCount;
 
-        await reader.ReadAsync();
-        return reader.GetValue(pos);
+            await reader.ReadAsync();
+            return reader.GetValue(collumn);
+        }
+        catch (Exception e)
+        {
+            _log.Error(e);
+            return default;
+        }
     }
 
     public static async Task Test()
@@ -123,14 +144,17 @@ internal static class DataBase
         {
             // await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
             var table = await GetAll("COMPANY");
-            foreach (var collum in from line in table from collum in line select collum)
+            foreach (var value in from line in table
+                                  from collum in line
+                                  select
+                         collum)
             {
-                Console.WriteLine($"{collum}");
+                Console.WriteLine($"{value}");
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _log.Error(e);
         }
     }
 

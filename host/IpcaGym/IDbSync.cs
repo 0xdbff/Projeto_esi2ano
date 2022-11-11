@@ -1,14 +1,18 @@
 namespace host;
 
-internal interface IDbSync
+internal interface IDataSync<TData> : IUtils
 {
-    internal Task Insert();
+    internal Task<int> Insert<T>(in T Table);
 
-    internal Task Remove();
+    internal Task<int> Remove<T>(in T Table);
 
-    internal Task Update();
+    internal Task<int> Update<T>(in T Table);
 
-    internal Task<Object> Get();
+    internal Task<List<object>> GetWithPk<T>(in string? tableName,
+                                             params string?[] primaryKeys);
 
-    internal Task<List<Object>> GetTable();
+    internal Task<List<object>> GetFieldWithPk<T>(in string? tableName, int collumn,
+                                                  params string?[] primaryKeys);
+
+    internal Task<List<List<object>>> GetTable<T>(in string? tableName);
 }

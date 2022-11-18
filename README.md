@@ -9,6 +9,8 @@
 
 ## Smart Campus -- Ipca Gym
 
+![Diagram](IpcaGym.png)
+
 ## License
 
 Licensed under either of

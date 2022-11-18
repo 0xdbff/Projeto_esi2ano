@@ -2,16 +2,22 @@ using Npgsql;
 
 namespace host;
 
-internal class DataBase
+/// <summary>
+/// 
+/// </summary>
+internal static class DataBase
 {
+    private static readonly NLog.Logger _log =
+        NLog.LogManager.GetCurrentClassLogger();
+
     /// <summary>
     ///     Connection String to system database (currently using postgres 14+).
-    ///     Any Changes to the Database connection rules will require a new
+    ///     Any Change to the Database connection rules will require a new
     ///     binary file with updated values as this constants are not intended
     ///     to change during runtime.
     /// </summary>
     private const string ConnString =
-        $"Server={Host};Username={User};Database={DbName};Port={Port};Password={PassWord};SSLMode=Prefer";
+        $@"Server={Host};Username={User};Database={DbName};Port={Port};Password={PassWord};SSLMode=Prefer";
 
     #region connection_rules
 
@@ -46,38 +52,121 @@ internal class DataBase
     ///     program, this is done via the await using C# construct, which ensures
     ///     that the connection is disposed even if an exception is later thrown.
     /// </summary>
-    /// <returns> Number of rows affected. </returns>
-    internal static async Task<int> Add()
+    /// <returns>
+    ///     Number of rows affected.
+    /// </returns>
+    internal static async Task<int> Insert(string? sql)
     {
-        await using var conn = new NpgsqlConnection(ConnString);
-        await conn.OpenAsync();
+        try
+        {
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
 
-        await using var cmd =
-            new NpgsqlCommand("INSERT INTO test (name) VALUES ($1)", conn);
-        cmd.Parameters.AddWithValue("...");
-        
-        return await cmd.ExecuteNonQueryAsync();
+            // @ allows escape characters.
+            await using var cmd = new NpgsqlCommand($@"INSERT INTO {sql}", conn);
+
+            return (await cmd.ExecuteNonQueryAsync());
+        }
+        catch (Exception e)
+        {
+            _log.Error(e);
+            return default;
+        }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    internal static async Task Read()
+    /// <param name="tableName"></param>
+    /// <returns></returns>
+    internal static async Task<List<List<object>>?> GetAll(string? tableName)
     {
-        await using var conn = new NpgsqlConnection(ConnString);
-        await conn.OpenAsync();
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
 
-        await using var cmd = new NpgsqlCommand("SELECT * FROM test", conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
+            await using var cmd =
+                new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
 
-        while (await reader.ReadAsync())
-            Console.WriteLine(reader.GetString(0));
+            // A generic list to hold all the lines from the Table.
+            var tableList = new List<List<object>>();
+
+            // Read every value with it's matching type, add it to the field list
+            // and in the outer loop to the table list.
+            while (await reader.ReadAsync())
+            {
+                // A generic list to hold all the columns from the Table.
+                var fieldList = new List<object>();
+
+                for (var currentField = 0; currentField < reader.FieldCount;
+                     currentField++)
+                    fieldList.Add(reader.GetValue(currentField));
+
+                tableList.Add(fieldList);
+            }
+            
+            return tableList;
+        }
+        catch (Exception e)
+        {
+            _log.Error(e);
+            return default;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableName"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
+    internal static async Task<object?> Get(string? tableName, int column)
+    {
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
+
+            await using var cmd =
+                new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            var a = reader.FieldCount;
+
+            await reader.ReadAsync();
+            return reader.GetValue(column);
+        }
+        catch (Exception e)
+        {
+            _log.Error(e);
+            return default;
+        }
     }
 
     public static async Task Test()
     {
-        await Add();
-        await Read();
+        try
+        {
+            // await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
+            var table = await GetAll("COMPANY");
+            foreach (var value in from line in table
+                                  from colum in line
+                                  select
+                         colum)
+            {
+                Console.WriteLine($"{value}");
+            }
+        }
+        catch (Exception e)
+        {
+            _log.Error(e);
+        }
     }
 
     #endregion

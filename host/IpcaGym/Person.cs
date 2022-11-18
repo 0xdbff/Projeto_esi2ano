@@ -1,5 +1,8 @@
 namespace host;
 
+/// <summary>
+/// 
+/// </summary>
 public abstract class Person
 {
     public uint Age { get; set; }

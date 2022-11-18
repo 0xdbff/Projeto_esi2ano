@@ -1,5 +1,5 @@
 ﻿using host;
 
-Utils.LoggerInit();
+// Utils.LoggerInit();
 
 await DataBase.Test();

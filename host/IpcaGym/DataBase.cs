@@ -2,6 +2,9 @@ using Npgsql;
 
 namespace host;
 
+/// <summary>
+/// 
+/// </summary>
 internal static class DataBase
 {
     private static readonly NLog.Logger _log =
@@ -72,8 +75,10 @@ internal static class DataBase
     }
 
     /// <summary>
-    ///
+    /// 
     /// </summary>
+    /// <param name="tableName"></param>
+    /// <returns></returns>
     internal static async Task<List<List<object>>?> GetAll(string? tableName)
     {
         try
@@ -103,7 +108,7 @@ internal static class DataBase
 
                 tableList.Add(fieldList);
             }
-
+            
             return tableList;
         }
         catch (Exception e)
@@ -113,7 +118,13 @@ internal static class DataBase
         }
     }
 
-    internal static async Task<object?> Get(string? tableName, int collumn)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableName"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
+    internal static async Task<object?> Get(string? tableName, int column)
     {
         try
         {
@@ -129,7 +140,7 @@ internal static class DataBase
             var a = reader.FieldCount;
 
             await reader.ReadAsync();
-            return reader.GetValue(collumn);
+            return reader.GetValue(column);
         }
         catch (Exception e)
         {
@@ -145,9 +156,9 @@ internal static class DataBase
             // await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
             var table = await GetAll("COMPANY");
             foreach (var value in from line in table
-                                  from collum in line
+                                  from colum in line
                                   select
-                         collum)
+                         colum)
             {
                 Console.WriteLine($"{value}");
             }

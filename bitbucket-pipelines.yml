@@ -14,21 +14,21 @@ pipelines:
               - dotnet restore
               - dotnet build --no-restore --configuration Release
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
-        # - step:
-        #     name: Lint the code host
-        #     caches:
-        #       - dotnetcore
-        #     script:
-        #       - cd host
-        #       - export SOLUTION_NAME=host
-        #       - export REPORTS_PATH=linter-reports
-        #       - dotnet new tool-manifest
-        #       - dotnet tool install JetBrains.ReSharper.GlobalTools
-        #       - dotnet tool restore
-        #       - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
-        #     artifacts:
-        #       - linter-reports/**
-        #       
+        - step:
+            name: Lint the code host
+            caches:
+              - dotnetcore
+            script:
+              - cd host
+              - export SOLUTION_NAME=host
+              - export REPORTS_PATH=linter-reports
+              - dotnet new tool-manifest
+              - dotnet tool install JetBrains.ReSharper.GlobalTools
+              - dotnet tool restore
+              - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
+            artifacts:
+              - linter-reports/**
+
         # - step:
         #     name: Build and Test client
         #     caches:

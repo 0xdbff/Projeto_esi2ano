@@ -1,5 +1,8 @@
 namespace host;
 
+/// <summary>
+/// 
+/// </summary>
 public class Gym : IDataSync<Gym.DbTable>
 {
 
@@ -13,7 +16,7 @@ public class Gym : IDataSync<Gym.DbTable>
         int a;
         int b;
     }
-
+    
     Task<int> IDataSync<DbTable>.Insert<T>(in T Table)
     {
         throw new NotImplementedException();
@@ -37,7 +40,7 @@ public class Gym : IDataSync<Gym.DbTable>
     }
 
     Task<List<object>>
-        IDataSync<DbTable>.GetFieldWithPk<T>(in string? tableName, int collumn,
+        IDataSync<DbTable>.GetFieldWithPk<T>(in string? tableName, int column,
                                              params string?[] primaryKeys)
     {
         throw new NotImplementedException();

@@ -10,7 +10,7 @@ pipelines:
               - dotnetcore
             script:
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
-              - dotnet workload restore
+              - dotnet restore ./Host/Host.csproj
               - dotnet build --no-restore --configuration Release ./Host/Host.csproj
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
         - step:
@@ -19,7 +19,7 @@ pipelines:
               - dotnetcore
             script:
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
-              - dotnet workload restore
+              - dotnet restore ./Websockets/Websockets.csproj
               - dotnet build --no-restore --configuration Release ./Websockets/Websockets.csproj
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
         # - step:

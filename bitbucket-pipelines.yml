@@ -15,7 +15,8 @@ pipelines:
               - dotnet workload install maui-tizen 
               - dotnet workload install macos 
               - dotnet workload install maui-tizen
-              - dotnet restore
+              - dotnet restore ./Websockets/Websockets.csproj
+              - dotnet restore ./Host/Host.csproj
               - dotnet build --no-restore --configuration Release
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
         - step:

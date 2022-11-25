@@ -1,9 +1,18 @@
+using Host;
+
 namespace host;
 
-public class Admin : Person
+public class Admin : Person, ILogin
 {
-    public override bool Login()
-    {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// 
+    /// </summary>
+    string? ILogin.Username { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    string? ILogin.HashedPassword { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    DateTime ILogin.LastLogin { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }

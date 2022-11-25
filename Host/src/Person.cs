@@ -1,12 +1,39 @@
+using Host;
+
 namespace host;
+
+public enum Gender
+{
+    Male,
+    Female,
+    Unspecified,
+}
 
 /// <summary>
 /// 
 /// </summary>
 public abstract class Person
 {
-    public uint Age { get; set; }
-    public string? Name { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public string? FirstName { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string? LastName { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Gender gender { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public DateOnly DateOfBirth { get; set; }
+
 
     #region methods
 
@@ -22,19 +49,33 @@ public abstract class Person
 
     #region abstract_methods
 
-    /// <summary>
-    /// </summary>
-    /// <returns></returns>
-    public abstract bool Login();
-
     #endregion
 
     #region private_attributes
 
+    /// <summary>
+    /// 
+    /// </summary>
     private uint _nif;
+
+    /// <summary>
+    /// 
+    /// </summary>
     private string? _address;
+
+    /// <summary>
+    /// 
+    /// </summary>
     private bool _loginStatus;
+
+    /// <summary>
+    /// 
+    /// </summary>
     private string? _hashedPassword;
+
+    /// <summary>
+    /// 
+    /// </summary>
     private string? _registeredDate;
 
     #endregion

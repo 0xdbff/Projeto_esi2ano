@@ -20,7 +20,7 @@ pipelines:
               - dotnetcore
             script:
               - cd Host
-              - export SOLUTION_NAME=Host
+              - export SOLUTION_NAME=../IpcaGym.sln
               - export REPORTS_PATH=linter-reports
               - dotnet new tool-manifest
               - dotnet tool install JetBrains.ReSharper.GlobalTools
@@ -45,7 +45,7 @@ pipelines:
               - dotnetcore
             script:
               - cd Client
-              - export SOLUTION_NAME=Client
+              - export SOLUTION_NAME=../IpcaGym.sln
               - export REPORTS_PATH=linter-reports
               - dotnet Client/ new tool-manifest
               - dotnet tool install JetBrains.ReSharper.GlobalTools
@@ -70,7 +70,7 @@ pipelines:
               - dotnetcore
             script:
               - cd Websockets
-              - export SOLUTION_NAME=Websockets
+              - export SOLUTION_NAME=../IpcaGym.sln
               - export REPORTS_PATH=linter-reports
               - dotnet Websockets/ new tool-manifest
               - dotnet tool install JetBrains.ReSharper.GlobalTools

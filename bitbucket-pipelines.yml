@@ -5,34 +5,36 @@ pipelines:
   default:
     - parallel:
         - step:
-            name: Build and Test the code
+            name: Build and Test /Host
             caches:
               - dotnetcore
             script:
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
-              # - dotnet workload install maui-android
-              # - dotnet workload install macos
-              # - dotnet workload install ios
-              # - dotnet workload install maui-tizen
-
-              # - dotnet restore ./Websockets/Websockets.csproj
-              # - dotnet restore ./Host/Host.csproj
               - dotnet workload restore
-              - dotnet build --no-restore --configuration Release --os linux-x64
+              - dotnet build --no-restore --configuration Release ./Host/Host.csproj
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
         - step:
-            name: Lint the code
+            name: Build and Test /Websockets
             caches:
               - dotnetcore
             script:
-              - export SOLUTION_NAME=IpcaGym
-              - export REPORTS_PATH=linter-reports
-              - dotnet new tool-manifest
-              - dotnet tool install JetBrains.ReSharper.GlobalTools
-              - dotnet tool restore
-              - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
-            artifacts:
-              - linter-reports/**
+              - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
+              - dotnet workload restore
+              - dotnet build --no-restore --configuration Release ./Websockets/Websockets.csproj
+              - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
+        # - step:
+        #     name: Lint the code
+        #     caches:
+        #       - dotnetcore
+        #     script:
+        #       - export SOLUTION_NAME=IpcaGym
+        #       - export REPORTS_PATH=linter-reports
+        #       - dotnet new tool-manifest
+        #       - dotnet tool install JetBrains.ReSharper.GlobalTools
+        #       - dotnet tool restore
+        #       - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
+        #     artifacts:
+        #       - linter-reports/**
 
         # - step:
         #     name: Build and Test client

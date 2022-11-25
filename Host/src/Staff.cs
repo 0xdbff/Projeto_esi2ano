@@ -21,9 +21,4 @@ public class Staff : Person, ILogin
     /// 
     /// </summary>
     DateTime ILogin.LastLogin { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    public override bool Login()
-    {
-        throw new NotImplementedException();
-    }
 }

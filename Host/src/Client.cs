@@ -15,9 +15,4 @@ public class Client : Person, ILogin
     string? ILogin.HashedPassword { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     DateTime ILogin.LastLogin { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    public override bool Login()
-    {
-        throw new NotImplementedException();
-    }
 }

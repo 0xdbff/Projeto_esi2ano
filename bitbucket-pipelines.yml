@@ -9,7 +9,7 @@ pipelines:
             caches:
               - dotnetcore
             script:
-              - cd host
+              - cd Host
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
               - dotnet restore
               - dotnet build --no-restore --configuration Release
@@ -19,8 +19,8 @@ pipelines:
             caches:
               - dotnetcore
             script:
-              - cd host
-              - export SOLUTION_NAME=host
+              - cd Host
+              - export SOLUTION_NAME=Host
               - export REPORTS_PATH=linter-reports
               - dotnet new tool-manifest
               - dotnet tool install JetBrains.ReSharper.GlobalTools
@@ -29,27 +29,52 @@ pipelines:
             artifacts:
               - linter-reports/**
 
-        # - step:
-        #     name: Build and Test client
-        #     caches:
-        #       - dotnetcore
-        #     script:
-        #       - cd client
-        #       - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
-        #       - dotnet restore
-        #       - dotnet build --no-restore --configuration Release
-        #       - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
-        # - step:
-        #     name: Lint the code client
-        #     caches:
-        #       - dotnetcore
-        #     script:
-        #       - cd client
-        #       - export SOLUTION_NAME=HelloProject
-        #       - export REPORTS_PATH=linter-reports
-        #       - dotnet client/ new tool-manifest
-        #       - dotnet tool install JetBrains.ReSharper.GlobalTools
-        #       - dotnet tool restore
-        #       - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
-        #     artifacts:
-        #       - linter-reports/**
+        - step:
+            name: Build and Test client
+            caches:
+              - dotnetcore
+            script:
+              - cd Client
+              - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
+              - dotnet restore
+              - dotnet build --no-restore --configuration Release
+              - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
+        - step:
+            name: Lint the code client
+            caches:
+              - dotnetcore
+            script:
+              - cd Client
+              - export SOLUTION_NAME=Client
+              - export REPORTS_PATH=linter-reports
+              - dotnet Client/ new tool-manifest
+              - dotnet tool install JetBrains.ReSharper.GlobalTools
+              - dotnet tool restore
+              - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
+            artifacts:
+              - linter-reports/**
+
+        - step:
+            name: Build and Test Websockets
+            caches:
+              - dotnetcore
+            script:
+              - cd Websockets
+              - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
+              - dotnet restore
+              - dotnet build --no-restore --configuration Release
+              - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
+        - step:
+            name: Lint the code client
+            caches:
+              - dotnetcore
+            script:
+              - cd Websockets
+              - export SOLUTION_NAME=Websockets
+              - export REPORTS_PATH=linter-reports
+              - dotnet Websockets/ new tool-manifest
+              - dotnet tool install JetBrains.ReSharper.GlobalTools
+              - dotnet tool restore
+              - dotnet jb inspectcode ${SOLUTION_NAME}.sln --output="${REPORTS_PATH}/jb-${BITBUCKET_BUILD_NUMBER}.xml"
+            artifacts:
+              - linter-reports/**

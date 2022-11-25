@@ -10,7 +10,11 @@ pipelines:
               - dotnetcore
             script:
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
-              - sudo dotnet workload install maui-android sudo dotnet workload install macos sudo dotnet workload install maui-tizen sudo dotnet workload install macos sudo dotnet workload install maui-tizen
+              - dotnet workload install maui-android
+              - dotnet workload install macos 
+              - dotnet workload install maui-tizen 
+              - dotnet workload install macos 
+              - dotnet workload install maui-tizen
               - dotnet restore
               - dotnet build --no-restore --configuration Release
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"

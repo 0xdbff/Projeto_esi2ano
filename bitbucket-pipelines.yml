@@ -18,7 +18,7 @@ pipelines:
               # - dotnet restore ./Websockets/Websockets.csproj
               # - dotnet restore ./Host/Host.csproj
               - dotnet workload restore
-              - dotnet build --no-restore --configuration Release --os linux
+              - dotnet build --no-restore --configuration Release --os linux-x64
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
         - step:
             name: Lint the code

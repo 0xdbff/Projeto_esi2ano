@@ -11,10 +11,10 @@ pipelines:
             script:
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
               - dotnet workload install maui-android
-              - dotnet workload install macos 
-              - dotnet workload install maui-tizen 
-              - dotnet workload install macos 
+              - dotnet workload install macos
+              - dotnet workload install ios
               - dotnet workload install maui-tizen
+
               - dotnet restore ./Websockets/Websockets.csproj
               - dotnet restore ./Host/Host.csproj
               - dotnet build --no-restore --configuration Release

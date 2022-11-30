@@ -1,5 +1,8 @@
-namespace host;
+namespace Host;
 
-public class Scheduling
+/// <summary>
+/// 
+/// </summary>
+internal class Scheduling
 {
 }

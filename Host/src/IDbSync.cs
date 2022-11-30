@@ -1,4 +1,4 @@
-namespace host;
+namespace Host;
 
 internal interface IDataSync<TData>
 {

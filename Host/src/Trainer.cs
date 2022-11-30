@@ -1,12 +1,19 @@
 using Host;
 
-namespace host;
+namespace Host;
 
 /// <summary>
 /// 
 /// </summary>
-public class Trainer : Person, ILogin
+internal class Trainer : Person, ILogin
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public Trainer()
+    {
+    }
+
     /// <summary>
     /// 
     /// </summary>

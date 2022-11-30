@@ -1,6 +1,6 @@
 using Host;
 
-namespace host;
+namespace Host;
 
 public enum Gender
 {
@@ -12,7 +12,7 @@ public enum Gender
 /// <summary>
 /// 
 /// </summary>
-public abstract class Person
+internal abstract class Person : Gym
 {
     /// <summary>
     /// 
@@ -27,7 +27,7 @@ public abstract class Person
     /// <summary>
     /// 
     /// </summary>
-    public Gender gender { get; set; }
+    public Gender Gender { get; set; }
 
     /// <summary>
     /// 
@@ -40,7 +40,7 @@ public abstract class Person
     /// <summary>
     /// </summary>
     /// <param name="addr"></param>
-    private void ChangeAddress(string? addr)
+    private protected void ChangeAddress(string? addr)
     {
         _address = addr;
     }
@@ -56,27 +56,17 @@ public abstract class Person
     /// <summary>
     /// 
     /// </summary>
-    private uint _nif;
+    private protected uint _nif;
 
     /// <summary>
     /// 
     /// </summary>
-    private string? _address;
+    private protected string? _address;
 
     /// <summary>
     /// 
     /// </summary>
-    private bool _loginStatus;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private string? _hashedPassword;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private string? _registeredDate;
+    private protected string? _registeredDate;
 
     #endregion
 }

@@ -1,6 +1,6 @@
 ﻿using NLog;
 
-namespace host;
+namespace Host;
 
 public static class Utils
 {

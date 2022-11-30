@@ -1,10 +1,8 @@
-﻿using host;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
-using System.Threading;
-using static host.Utils;
+﻿using Host;
+using static Host.Utils;
 
 LoggerInit();
 
 var Client = new Client();
 
-//await DataBase.Test();
+await DataBase.Test();

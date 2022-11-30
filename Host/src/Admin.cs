@@ -1,9 +1,19 @@
 using Host;
 
-namespace host;
+namespace Host;
 
-public class Admin : Person, ILogin
+/// <summary>
+/// 
+/// </summary>
+internal class Admin : Person, ILogin
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public Admin()
+    {
+    }
+
     /// <summary>
     /// 
     /// </summary>

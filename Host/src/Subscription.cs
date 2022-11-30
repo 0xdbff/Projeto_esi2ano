@@ -1,8 +1,9 @@
-namespace host;
+namespace Host;
 
 /// <summary>
 /// 
 /// </summary>
-public class Subscription
+internal class Subscription : Payment
 {
+    
 }

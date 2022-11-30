@@ -1,54 +1,53 @@
-namespace host;
+namespace Host;
 
 /// <summary>
 /// 
 /// </summary>
-public class Gym : IDataSync<Gym.DbTable>
+internal class Gym
 {
+    #region Attributes
 
-    private uint _numClientes { get; set; }
-    private uint _numFuncionarios { get; set; }
-    private uint _LotacaoTotal { get; set; }
-    public uint LotacaoTotal { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    private protected Guid Id { get; private set; }
 
-    internal struct DbTable
+    /// <summary>
+    /// 
+    /// </summary>
+    private static uint _numClientes;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static uint _numFuncionarios;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static uint _lotacaoTotal;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static uint LotacaoAtual;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal Gym()
     {
-        int a;
-        int b;
     }
 
-    Task<int> IDataSync<DbTable>.Insert<T>(in T Table)
-    {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// 
+    /// </summary>
+    internal static string? MbRerefence { get; private set; }
 
-    Task<int> IDataSync<DbTable>.Remove<T>(in T Table)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<int> IDataSync<DbTable>.Update<T>(in T Table)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<List<object>>
-        IDataSync<DbTable>.GetWithPk<T>(in string? tableName,
-                                        params string?[] primaryKeys)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<List<object>>
-        IDataSync<DbTable>.GetFieldWithPk<T>(in string? tableName, int column,
-                                             params string?[] primaryKeys)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<List<List<object>>>
-        IDataSync<DbTable>.GetTable<T>(in string? tableName)
-    {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// 
+    /// </summary>
+    internal static string? _address { get; private set; }
+    
+    #endregion
 }

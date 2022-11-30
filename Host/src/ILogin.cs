@@ -10,9 +10,7 @@ public enum UserType
     /// <summary> </summary>
     Trainer,
     /// <summary> </summary>
-    AcademicCLient,
-    /// <summary> </summary>
-    NormalClient,
+    Client
 }
 
 /// <summary>

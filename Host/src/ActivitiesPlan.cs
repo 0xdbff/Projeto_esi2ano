@@ -1,5 +1,8 @@
-namespace host;
+namespace Host;
 
-public class ActivitiesPlan
+/// <summary>
+/// 
+/// </summary>
+internal class ActivitiesPlan
 {
 }

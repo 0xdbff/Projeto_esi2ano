@@ -1,14 +1,25 @@
 using Host;
 
-namespace host;
+namespace Host;
 
 /// <summary>
 /// 
 /// </summary>
-public class Client : Person, ILogin
+public enum ClientType
+{
+    Academic,
+    Common,
+    Invalid
+}
+
+/// <summary>
+/// 
+/// </summary>
+internal class Client : Person, ILogin
 {
     /// <summary>
-    /// 
+    /// Register a new client.
+    /// Client's class constructor.
     /// </summary>
     public Client()
     {
@@ -33,4 +44,8 @@ public class Client : Person, ILogin
     {
         throw new NotImplementedException();
     }
+
+    #region methods
+
+    #endregion
 }

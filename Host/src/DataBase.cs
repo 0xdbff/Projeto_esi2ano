@@ -1,8 +1,10 @@
+using NLog.Targets;
 using Npgsql;
 using System.Data;
-using static host.Utils;
+using static Host.Utils;
+using System.Linq;
 
-namespace host;
+namespace Host;
 
 /// <summary>
 /// 
@@ -78,7 +80,7 @@ internal static class DataBase
     /// </summary>
     /// <param name="tableName"></param>
     /// <returns></returns>
-    internal static async Task<List<List<object>>?> GetAll(string? tableName)
+    internal static async Task<List<List<object?>>?> GetAll(string? tableName)
     {
         try
         {
@@ -92,14 +94,14 @@ internal static class DataBase
             await using var reader = await cmd.ExecuteReaderAsync();
 
             // A generic list to hold all the lines from the Table.
-            var tableList = new List<List<object>>();
+            var tableList = new List<List<object?>>();
 
             // Read every value with it's matching type, add it to the field list
             // and in the outer loop to the table list.
             while (await reader.ReadAsync())
             {
                 // A generic list to hold all the columns from the Table.
-                var fieldList = new List<object>();
+                var fieldList = new List<object?>();
 
                 for (var currentField = 0; currentField < reader.FieldCount;
                      currentField++)
@@ -183,38 +185,14 @@ internal static class DataBase
     {
         try
         {
-            int i = 0;
-            var now = DateTime.Now;
-
-            for (i = 0; i < 100_000; i++)
+            var values = await GetAll("logindata");
+            foreach (var value in from line in values
+                                  from collum in line
+                         select collum
+                    )
             {
-                // await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
-                //await Insert($"logindata values ('testusername{i}{DateTime.Now}','passHash{i}', '{i%3>>2}')");
-                await Insert($"logindata values ('testusername{i}{DateTime.Now}','passHash{i}', '{i % 3 >> 2}')");
+                Console.WriteLine(value);
             }
-
-            var table = await GetAll("logindata");
-            foreach (var value in from line in table
-                                  from colum in line
-                                  select
-                         colum)
-            {
-                //Console.WriteLine($"{value}");
-                i++;
-                if (i == 1000_000)
-                    break;
-            }
-            Console.WriteLine($"___________________{i} reads ______________________");
-
-            var finish = DateTime.Now;
-
-            var dif = finish.Subtract(now);
-
-            Console.WriteLine(dif);
-
-            Console.WriteLine($"Queries per second {(float)i / dif.TotalSeconds}");
-
-            Console.WriteLine (await RunSql("SELECT SUM(xact_commit) FROM pg_stat_database"));
         }
         catch (Exception e)
         {

@@ -2,7 +2,10 @@ using Host;
 
 namespace host;
 
-public class Admin : Person, ILogin
+/// <summary>
+/// 
+/// </summary>
+public class Trainer : Person, ILogin
 {
     /// <summary>
     /// 

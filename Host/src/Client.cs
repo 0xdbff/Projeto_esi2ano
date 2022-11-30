@@ -2,17 +2,35 @@ using Host;
 
 namespace host;
 
+/// <summary>
+/// 
+/// </summary>
 public class Client : Person, ILogin
 {
     /// <summary>
     /// 
     /// </summary>
-    string? ILogin.Username { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public Client()
+    {
+    }
 
     /// <summary>
     /// 
     /// </summary>
-    string? ILogin.HashedPassword { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-    DateTime ILogin.LastLogin { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    List<ILogin.UsedCredentials> ILogin.GetCredentialsHistory()
+    {
+        throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    List<ILogin.Data> ILogin.GetLoginHistory()
+    {
+        throw new NotImplementedException();
+    }
 }

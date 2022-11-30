@@ -15,15 +15,21 @@ public enum UserType
     NormalClient,
 }
 
+/// <summary>
+/// 
+/// </summary>
 public enum IpType
 {
     v4,
     v6
 }
 
-public struct Ip
+/// <summary>
+/// 
+/// </summary>
+internal struct Ip
 { 
-    IpType Type { get; set; }
+    internal IpType Type { get; set; }
 }
 
 /// <summary>
@@ -111,6 +117,10 @@ internal interface ILogin
 
     #region methods
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     internal LoginStatus Login() { return default; }
 
     /// <summary>
@@ -124,7 +134,6 @@ internal interface ILogin
     /// </summary>
     /// <returns></returns>
     internal List<Data> GetLoginHistory();
-
     
     #endregion
 }

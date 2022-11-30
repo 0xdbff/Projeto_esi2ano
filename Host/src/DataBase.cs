@@ -1,4 +1,5 @@
 using Npgsql;
+using System.Data;
 using static host.Utils;
 
 namespace host;
@@ -147,19 +148,73 @@ internal static class DataBase
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableName"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
+    internal static async Task<object?> RunSql(string? sql)
+    {
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
+
+            await using var cmd =
+                new NpgsqlCommand(sql, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            var a = reader.FieldCount;
+
+            await reader.ReadAsync();
+            return reader.GetValue(0);
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+            return default;
+        }
+    }
+
     public static async Task Test()
     {
         try
         {
-            // await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
+            int i = 0;
+            var now = DateTime.Now;
+
+            for (i = 0; i < 100_000; i++)
+            {
+                // await Insert("COMPANY VALUES (2, 'Paul', 32, 'California', 20000.00)");
+                //await Insert($"logindata values ('testusername{i}{DateTime.Now}','passHash{i}', '{i%3>>2}')");
+                await Insert($"logindata values ('testusername{i}{DateTime.Now}','passHash{i}', '{i % 3 >> 2}')");
+            }
+
             var table = await GetAll("logindata");
             foreach (var value in from line in table
                                   from colum in line
                                   select
                          colum)
             {
-                Console.WriteLine($"{value}");
+                //Console.WriteLine($"{value}");
+                i++;
+                if (i == 1000_000)
+                    break;
             }
+            Console.WriteLine($"___________________{i} reads ______________________");
+
+            var finish = DateTime.Now;
+
+            var dif = finish.Subtract(now);
+
+            Console.WriteLine(dif);
+
+            Console.WriteLine($"Queries per second {(float)i / dif.TotalSeconds}");
+
+            Console.WriteLine (await RunSql("SELECT SUM(xact_commit) FROM pg_stat_database"));
         }
         catch (Exception e)
         {

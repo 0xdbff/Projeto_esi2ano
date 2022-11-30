@@ -14,5 +14,8 @@ public class Admin : Person, ILogin
     /// </summary>
     string? ILogin.HashedPassword { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+    /// <summary>
+    /// 
+    /// </summary>
     DateTime ILogin.LastLogin { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }

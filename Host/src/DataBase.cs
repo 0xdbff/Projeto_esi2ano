@@ -3,6 +3,7 @@ using Npgsql;
 using System.Data;
 using static Host.Utils;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Host;
 
@@ -56,16 +57,17 @@ internal static class DataBase
     /// <returns>
     ///     Number of rows affected.
     /// </returns>
-    internal static async Task<int> Insert(string? sql)
+    internal static async Task<int> Insert(string? @sql)
     {
         try
         {
-            await using var conn = new NpgsqlConnection(ConnString);
-            await conn.OpenAsync();
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnString);
+            await using var dataSource = dataSourceBuilder.Build();
 
-            // @ allows escape characters.
-            await using var cmd = new NpgsqlCommand($@"INSERT INTO {sql}", conn);
-
+            // Execute command(s) in the dbms and await results.
+            await using var cmd = dataSource.CreateCommand(sql);
             return (await cmd.ExecuteNonQueryAsync());
         }
         catch (Exception e)
@@ -78,39 +80,38 @@ internal static class DataBase
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="tableName"></param>
+    /// <param name="sql"></param>
     /// <returns></returns>
-    internal static async Task<List<List<object?>>?> GetAll(string? tableName)
+    internal static async Task<List<Dictionary<int, object?>>?> GetValues(string? @sql)
     {
         try
         {
             // Open a connection that will live through the execution of this method's
             // stack frame.
-            await using var conn = new NpgsqlConnection(ConnString);
-            await conn.OpenAsync();
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnString);
+            await using var dataSource = dataSourceBuilder.Build();
 
-            await using var cmd =
-                new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
+            await using var cmd = dataSource.CreateCommand(sql);
             await using var reader = await cmd.ExecuteReaderAsync();
 
-            // A generic list to hold all the lines from the Table.
-            var tableList = new List<List<object?>>();
+            // A generic list to hold all possible lines from the Table.
+            var values = new List<Dictionary<int, object?>>();
 
-            // Read every value with it's matching type, add it to the field list
-            // and in the outer loop to the table list.
             while (await reader.ReadAsync())
             {
                 // A generic list to hold all the columns from the Table.
-                var fieldList = new List<object?>();
+                var fieldList = new Dictionary<int, object?>();
 
                 for (var currentField = 0; currentField < reader.FieldCount;
                      currentField++)
-                    fieldList.Add(reader.GetValue(currentField));
+                { 
+                    fieldList.Add(currentField, reader.GetValue(currentField));
+                }
 
-                tableList.Add(fieldList);
+                values.Add(fieldList);
             }
 
-            return tableList;
+            return values;
         }
         catch (Exception e)
         {
@@ -125,30 +126,31 @@ internal static class DataBase
     /// <param name="tableName"></param>
     /// <param name="column"></param>
     /// <returns></returns>
-    internal static async Task<object?> Get(string? tableName, int column)
-    {
-        try
-        {
-            // Open a connection that will live through the execution of this method's
-            // stack frame.
-            await using var conn = new NpgsqlConnection(ConnString);
-            await conn.OpenAsync();
+    //internal static async Task<object?> Get(string? sql)
+    //{
+    //    try
+    //    {
+    //        // Open a connection that will live through the execution of this method's
+    //        // stack frame.
+    //        await using var conn = new NpgsqlConnection(ConnString);
+    //        await conn.OpenAsync();
 
-            await using var cmd =
-                new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
-            await using var reader = await cmd.ExecuteReaderAsync();
+    //        await using var cmd =
+    //            new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
+    //        await using var reader = await cmd.ExecuteReaderAsync();
 
-            var a = reader.FieldCount;
+    //        var a = reader.FieldCount;
 
-            await reader.ReadAsync();
-            return reader.GetValue(column);
-        }
-        catch (Exception e)
-        {
-            Log.Error(e);
-            return default;
-        }
-    }
+    //        await reader.ReadAsync();
+
+    //        return reader.GetValue(column);
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        Log.Error(e);
+    //        return default;
+    //    }
+    //}
 
     /// <summary>
     /// 
@@ -172,6 +174,8 @@ internal static class DataBase
             var a = reader.FieldCount;
 
             await reader.ReadAsync();
+
+            //
             return reader.GetValue(0);
         }
         catch (Exception e)
@@ -185,13 +189,16 @@ internal static class DataBase
     {
         try
         {
-            var values = await GetAll("logindata");
-            foreach (var value in from line in values
+            //var insert = await Insert(@$"insert into logindata(username,hashedpassword) VALUES ('username23', 'hash')");
+
+            var values = await GetValues("select * from logindata") as List<Dictionary<int,object>>;
+
+            foreach (var val in from line in values
                                   from collum in line
-                         select collum
+                                  select collum
                     )
             {
-                Console.WriteLine(value);
+                Console.WriteLine(val.Value);
             }
         }
         catch (Exception e)

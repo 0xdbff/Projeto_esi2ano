@@ -28,26 +28,26 @@ internal class Gym
     private static uint _lotacaoTotal;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     private static uint LotacaoAtual;
 
     /// <summary>
-    /// 
+    /// The gym's constructor.
     /// </summary>
     internal Gym()
     {
     }
 
     /// <summary>
-    /// 
+    /// The gym's mb reference.
     /// </summary>
     internal static string? MbRerefence { get; private set; }
 
     /// <summary>
-    /// 
+    /// The gym's address.
     /// </summary>
-    internal static string? _address { get; private set; }
+    internal static string? _gymAddress { get; private set; }
     
     #endregion
 }

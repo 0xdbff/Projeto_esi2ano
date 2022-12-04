@@ -1,14 +1,10 @@
-using NLog.Targets;
 using Npgsql;
-using System.Data;
 using static Host.Utils;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace Host;
 
 /// <summary>
-/// 
+///
 /// </summary>
 internal static class DataBase
 {
@@ -19,7 +15,8 @@ internal static class DataBase
     ///     to change during runtime.
     /// </summary>
     private const string ConnString =
-        $@"Server={Host};Username={User};Database={DbName};Port={Port};Password={PassWord};SSLMode=Prefer";
+        $@"Server={Host};Username={User};Database={DbName};Port={Port};
+        Password={PassWord};SSLMode=Prefer";
 
     #region connection_rules
 
@@ -30,7 +27,7 @@ internal static class DataBase
     private const string User = "postgres";
 
     /// <summary> Database name for postgresql server. </summary>
-    private const string DbName = "testdb";
+    private const string DbName = "postgres";
 
     /// <summary>
     ///     Password for postgresql server (needless to say, protect this src
@@ -78,11 +75,12 @@ internal static class DataBase
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="sql"></param>
     /// <returns></returns>
-    internal static async Task<List<Dictionary<int, object?>>?> GetValues(string? @sql)
+    internal static async Task<List<Dictionary<int, object?>>?>
+    GetValues(string? @sql)
     {
         try
         {
@@ -104,7 +102,7 @@ internal static class DataBase
 
                 for (var currentField = 0; currentField < reader.FieldCount;
                      currentField++)
-                { 
+                {
                     fieldList.Add(currentField, reader.GetValue(currentField));
                 }
 
@@ -121,19 +119,20 @@ internal static class DataBase
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="tableName"></param>
     /// <param name="column"></param>
     /// <returns></returns>
-    //internal static async Task<object?> Get(string? sql)
+    // internal static async Task<object?> Get(string? sql)
     //{
-    //    try
-    //    {
-    //        // Open a connection that will live through the execution of this method's
-    //        // stack frame.
-    //        await using var conn = new NpgsqlConnection(ConnString);
-    //        await conn.OpenAsync();
+    //     try
+    //     {
+    //         // Open a connection that will live through the execution of this
+    //         method's
+    //         // stack frame.
+    //         await using var conn = new NpgsqlConnection(ConnString);
+    //         await conn.OpenAsync();
 
     //        await using var cmd =
     //            new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
@@ -153,7 +152,7 @@ internal static class DataBase
     //}
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="tableName"></param>
     /// <param name="column"></param>
@@ -167,8 +166,7 @@ internal static class DataBase
             await using var conn = new NpgsqlConnection(ConnString);
             await conn.OpenAsync();
 
-            await using var cmd =
-                new NpgsqlCommand(sql, conn);
+            await using var cmd = new NpgsqlCommand(sql, conn);
             await using var reader = await cmd.ExecuteReaderAsync();
 
             var a = reader.FieldCount;
@@ -185,25 +183,46 @@ internal static class DataBase
         }
     }
 
-    public static async Task Test()
+    internal static async Task Init() { }
+
+    public static async Task<int> Test()
     {
+        // try
+        // {
+        //     // var insert = await Insert(@$"insert into
+        //     // logindata(username,hashedpassword) VALUES ('username23',
+        //     'hash')");
+        //
+        //     var values = await GetValues("select * from logindata")
+        //         as List<Dictionary<int, object>>;
+        //
+        //     foreach (var val in from line in values
+        //                         from collum in line
+        //                         select
+        //                  collum)
+        //     {
+        //         Console.WriteLine(val.Value);
+        //     }
+        // }
+        // catch (Exception e)
+        // {
+        //     Log.Error(e);
+        // }
+        //
         try
         {
-            //var insert = await Insert(@$"insert into logindata(username,hashedpassword) VALUES ('username23', 'hash')");
+            await using var conn = new NpgsqlConnection(ConnString);
+            await conn.OpenAsync();
 
-            var values = await GetValues("select * from logindata") as List<Dictionary<int,object>>;
+            // Create the database if it does not exist.
+            await using var cmd = new NpgsqlCommand(@"create database dbname", conn);
 
-            foreach (var val in from line in values
-                                  from collum in line
-                                  select collum
-                    )
-            {
-                Console.WriteLine(val.Value);
-            }
+            return (await cmd.ExecuteNonQueryAsync());
         }
         catch (Exception e)
         {
             Log.Error(e);
+            return default;
         }
     }
 

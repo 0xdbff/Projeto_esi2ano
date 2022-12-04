@@ -3,14 +3,22 @@ using static Host.Utils;
 
 LoggerInit();
 
-var client1 = new Client();
+try
+{
 
-//await DataBase.Test();
+    var client1 = new Client();
 
-client1.UpdateHeight(1.1);
+    //await DataBase.Test();
 
-client1.UpdateWeight(59.999999);
+    client1.UpdateHeight(2.39);
 
-Console.WriteLine(client1.CurrentImc);
+    client1.UpdateWeight(20.1);
 
-Console.WriteLine(client1.ImcValue);
+    Console.WriteLine(client1.CurrentBmi);
+
+    Console.WriteLine(client1.BmiValue);
+}
+catch
+{
+    
+}

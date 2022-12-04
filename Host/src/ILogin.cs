@@ -3,7 +3,7 @@
 /// <summary>
 /// 
 /// </summary>
-public enum UserType
+internal enum UserType
 {
     /// <summary> </summary>
     Admin,
@@ -16,7 +16,7 @@ public enum UserType
 /// <summary>
 /// 
 /// </summary>
-public enum IpType
+internal enum IpType
 {
     v4,
     v6
@@ -119,19 +119,19 @@ internal interface ILogin
     /// 
     /// </summary>
     /// <returns></returns>
-    internal LoginStatus Login() { return default; }
+    private protected LoginStatus Login();
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    internal List<UsedCredentials> GetCredentialsHistory();
+    internal static List<UsedCredentials>? GetCredentialsHistory() { return default; }
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    internal List<Data> GetLoginHistory();
+    internal static List<Data>? GetLoginHistory() { return default; }
     
     #endregion
 }

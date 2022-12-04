@@ -7,7 +7,7 @@ namespace Host;
 /// <summary>
 /// 
 /// </summary>
-public enum ClientType
+internal enum ClientType
 {
     /// <summary> </summary>
     Academic,
@@ -20,7 +20,7 @@ public enum ClientType
 /// <summary>
 /// 
 /// </summary>
-public enum Imc
+internal enum Bmi
 {
     /// <summary> </summary>
     Underweight3,
@@ -43,46 +43,50 @@ public enum Imc
 /// <summary>
 /// 
 /// </summary>
-internal class Client : Person, ILogin
+internal partial class Client : Person, ILogin
 {
     #region attributes
 
     /// <summary>
-    /// 
+    /// The type of the client assigned by the system.
     /// </summary>
-    private protected ClientType _clientType;
+    internal ClientType ClientType { get; private set; }
 
     /// <summary>
-    /// 
+    /// The client's height in meters.
     /// </summary>
-    private protected double _height;
+    private double _height;
 
     /// <summary>
-    /// 
+    /// The client's weight in kilograms.
     /// </summary>
-    private protected double _weight;
+    private double _weight;
 
     /// <summary>
-    /// 
+    /// The client's BMI value.
     /// </summary>
-    internal double ImcValue
-    { get => _weight / (_height * _height); }
+    internal double BmiValue 
+    { 
+        get => _weight / (_height * _height);
+    }
 
     /// <summary>
-    /// Get current Imc situation, for the average person.
+    /// Get current Bmi situation, for the average person.
     /// </summary>
-    internal Imc CurrentImc
+    internal Bmi CurrentBmi
     {
-        get => ImcValue switch
+        get => BmiValue switch
         {
-            < 16 => Imc.Underweight3,
-            < 17 => Imc.Underweight2,
-            < 18.5 => Imc.Underweight1,
-            < 25 => Imc.Normal,
-            < 30 => Imc.Overweight,
-            < 35 => Imc.Obese1,
-            < 40 => Imc.Obese2,
-            _ => Imc.Obese3
+            < 3.5 => throw new InvalidClientDataException("BMI not valid, too small"),
+            < 16 => Bmi.Underweight3,
+            < 17 => Bmi.Underweight2,
+            < 18.5 => Bmi.Underweight1,
+            < 25 => Bmi.Normal,
+            < 30 => Bmi.Overweight,
+            < 35 => Bmi.Obese1,
+            < 40 => Bmi.Obese2,
+            < 100 => Bmi.Obese3,
+            _ => throw new InvalidClientDataException("BMI not valid, too high")
         };
     }
 
@@ -96,36 +100,8 @@ internal class Client : Person, ILogin
     {
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    List<ILogin.UsedCredentials> ILogin.GetCredentialsHistory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    List<ILogin.Data> ILogin.GetLoginHistory()
-    {
-        throw new NotImplementedException();
-    }
 
     #region methods
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    internal Imc EvaluateImc()
-    {
-        return default;
-    }
 
     /// <summary>
     /// 
@@ -153,7 +129,7 @@ internal class Client : Person, ILogin
     {
         try
         {
-            _height = weight < 200 && weight > 20
+            _weight = weight < 200 && weight > 20
                 ? weight
                 : throw new InvalidClientDataException("Weight is not Valid");
         }
@@ -161,6 +137,25 @@ internal class Client : Person, ILogin
         {
             Log.Error(e);
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    internal static List<double>? GetImcHistory()
+    {
+        return default;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    ILogin.LoginStatus ILogin.Login()
+    {
+        throw new NotImplementedException();
     }
 
     #endregion

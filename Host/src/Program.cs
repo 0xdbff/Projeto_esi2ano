@@ -5,4 +5,4 @@ LoggerInit();
 
 var client1 = new Client();
 
-Console.WriteLine(await DataBase.Test());
+await DataBase.Test();

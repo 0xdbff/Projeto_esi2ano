@@ -8,8 +8,20 @@ namespace Host;
 /// </summary>
 internal static class DataBase
 {
+    #region bakup_path
+
+    /// Absolute paths, This Files will be stored on the DBMS(postgres) server.
+
+    private static string? _backupDdlPath = "/home/db/dev/repo_g06/data/";
+
+    private static string? _backupDbPath = "/home/db/dev/repo_g06/data/";
+
+    #endregion
+
+    #region connection_rules
+
     /// <summary>
-    ///     Connection String to system database (currently using postgres 14+).
+    ///     Connection String to system's database (currently using postgres 14+).
     ///     Any Change to the Database connection rules will require a new
     ///     binary file with updated values as this constants are not intended
     ///     to change during runtime.
@@ -18,7 +30,16 @@ internal static class DataBase
         $@"Server={Host};Username={User};Database={DbName};Port={Port};
         Password={PassWord};SSLMode=Prefer";
 
-    #region connection_rules
+    /// <summary>
+    ///     Connection String to system's database as an administrator for the
+    ///     DBMS(currently using postgres 14+).
+    ///     Any Change to the Database connection rules will require a new
+    ///     binary file with updated values as this constants are not intended
+    ///     to change during runtime.
+    /// </summary>
+    private const string AdminConnString =
+        $@"Server={Host};Username={User};Database={AdminDbName};Port={Port};
+        Password={PassWord};SSLMode=Prefer";
 
     /// <summary> Hostname for postgresql server. </summary>
     private const string Host = "localhost";
@@ -26,8 +47,11 @@ internal static class DataBase
     /// <summary> Username for postgresql server. </summary>
     private const string User = "postgres";
 
-    /// <summary> Database name for postgresql server. </summary>
-    private const string DbName = "postgres";
+    /// <summary> Database name. </summary>
+    private const string DbName = "IpcaGym";
+
+    /// <summary> Admin Database name. /summary>
+    private const string AdminDbName = "postgres";
 
     /// <summary>
     ///     Password for postgresql server (needless to say, protect this src
@@ -54,7 +78,7 @@ internal static class DataBase
     /// <returns>
     ///     Number of rows affected.
     /// </returns>
-    internal static async Task<int> Insert(string? @sql)
+    internal static async Task<int> CmdExecuteNonQueryAsync(string? @sql)
     {
         try
         {
@@ -74,13 +98,33 @@ internal static class DataBase
         }
     }
 
+    internal static async Task<int> AdminCmdExecuteNonQueryAsync(string? @sql)
+    {
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(AdminConnString);
+            await using var dataSource = dataSourceBuilder.Build();
+
+            // Execute command(s) in the dbms and await results.
+            await using var cmd = dataSource.CreateCommand(sql);
+            return (await cmd.ExecuteNonQueryAsync());
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+            return default;
+        }
+    }
+
     /// <summary>
     ///
     /// </summary>
     /// <param name="sql"></param>
     /// <returns></returns>
     internal static async Task<List<Dictionary<int, object?>>?>
-    GetValues(string? @sql)
+    CmdExecuteQueryAsync(string? @sql)
     {
         try
         {
@@ -92,7 +136,8 @@ internal static class DataBase
             await using var cmd = dataSource.CreateCommand(sql);
             await using var reader = await cmd.ExecuteReaderAsync();
 
-            // A generic list to hold all possible lines from the Table.
+            // A List of Dictionary with key value pairs, to hold return values
+            // from an unknown query.
             var values = new List<Dictionary<int, object?>>();
 
             while (await reader.ReadAsync())
@@ -167,13 +212,13 @@ internal static class DataBase
             await conn.OpenAsync();
 
             await using var cmd = new NpgsqlCommand(sql, conn);
+
             await using var reader = await cmd.ExecuteReaderAsync();
 
             var a = reader.FieldCount;
 
             await reader.ReadAsync();
 
-            //
             return reader.GetValue(0);
         }
         catch (Exception e)
@@ -183,9 +228,92 @@ internal static class DataBase
         }
     }
 
-    internal static async Task Init() { }
+    private static async Task ensureDataBaseTables()
+    {
+        try
+        {
+            // Data definition language (.ddl) file for IpcaGym.
+            StreamReader sr = new StreamReader($"{_backupDdlPath}IpcaGym.ddl");
+            var cmd = await sr.ReadToEndAsync();
 
-    public static async Task<int> Test()
+            // Execute all the commands previously defined.
+            await CmdExecuteQueryAsync(cmd);
+        }
+        catch (NpgsqlException e)
+        {
+            Log.Error("Fodasse");
+            Log.Error(e);
+            Log.Error("Cannot proceed, exiting program with exit code 1");
+
+            // Exit the executable with an error code.
+            Environment.Exit(1);
+        }
+    }
+
+    private static async Task createDatabase()
+    {
+        try
+        {
+            // Create a database
+            await CmdExecuteNonQueryAsync($"CREATE DATABASE {DbName}");
+        }
+        catch (NpgsqlException e)
+        {
+            Log.Error(e);
+            Log.Error("Cannot proceed, exiting program with exit code 1");
+
+            // Exit the executable with an error code.
+            Environment.Exit(1);
+        }
+    }
+
+    internal static async Task Init()
+    {
+        try
+        {
+            // Open a connection 'Admin database' that will live through the execution
+            // of this method's stack frame.
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(AdminConnString);
+            await using var dataSource = dataSourceBuilder.Build();
+
+            // Test if there is a database with {DbName}
+            await using var cmd = dataSource.CreateCommand(
+                @$"SELECT datname FROM pg_catalog.pg_database 
+                WHERE lower(datname) = lower('{DbName}');");
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            // Check database
+            if (reader.Read())
+            {
+                // Ensure all the tables are present.
+                await ensureDataBaseTables();
+            }
+            else
+            {
+                // Database does not exits, create one and Warn the admin.
+                throw new NpgsqlException($"Database {DbName} Does not exist!!");
+            }
+        }
+        catch (NpgsqlException e)
+        {
+            Log.Error(e);
+            Log.Warn(
+                $"Proceeding without database '{DbName}', no values are present...");
+            Log.Warn($"Creating a new one with name '{DbName}' as user {User}.");
+
+            // Create Database.
+            await createDatabase();
+            // Create Tables
+            await ensureDataBaseTables();
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+            //
+        }
+    }
+
+    public static async Task Test()
     {
         // try
         // {
@@ -211,18 +339,20 @@ internal static class DataBase
         //
         try
         {
-            await using var conn = new NpgsqlConnection(ConnString);
-            await conn.OpenAsync();
+            // await using var conn = new NpgsqlConnection(ConnString);
+            // await conn.OpenAsync();
 
             // Create the database if it does not exist.
-            await using var cmd = new NpgsqlCommand(@"create database dbname", conn);
+            // await using var cmd = new NpgsqlCommand(@"create database dbname",
+            // conn);
 
-            return (await cmd.ExecuteNonQueryAsync());
+            await Init();
+            // return (await cmd.ExecuteNonQueryAsync());
+            // return 3;
         }
         catch (Exception e)
         {
             Log.Error(e);
-            return default;
         }
     }
 

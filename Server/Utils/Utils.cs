@@ -23,7 +23,5 @@ public static class Logger
         });
     }
 
-    TestError
-
     #endregion
 }

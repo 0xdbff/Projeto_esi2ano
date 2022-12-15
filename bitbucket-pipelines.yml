@@ -9,19 +9,21 @@ pipelines:
             caches:
               - dotnetcore
             script:
+              - cd Server/
               - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
               - dotnet restore ./Host/Host.csproj
               - dotnet build --no-restore --configuration Release ./Host/Host.csproj
               - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
-        - step:
-            name: Build and Test /Websockets
-            caches:
-              - dotnetcore
-            script:
-              - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
-              - dotnet restore ./Websockets/Websockets.csproj
-              - dotnet build --no-restore --configuration Release ./Websockets/Websockets.csproj
-              - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
+        # - step:
+        #     name: Build and Test /Websockets
+        #     caches:
+        #       - dotnetcore
+        #     script:
+        #       - cd Server/
+        #       - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
+        #       - dotnet restore ./Websockets/Websockets.csproj
+        #       - dotnet build --no-restore --configuration Release ./Websockets/Websockets.csproj
+        #       - dotnet test --no-build --configuration Release --test-adapter-path:. --logger:"junit;LogFilePath=$REPORTS_PATH/junit.xml"
         # - step:
         #     name: Lint the code
         #     caches:

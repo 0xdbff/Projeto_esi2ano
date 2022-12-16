@@ -1,15 +1,18 @@
-# Projeto 2 ano!
+## Hosting Server source code
 
-# Ginásio académico.
+### Ginásio académico.
 
-## Autores:
-[Diogo Bernardo](https://www.github.com/Db-Dev2002) a21144@alunos.ipca.pt
+## TODOs
 
-[João Ribeiro](https://github.com/joaaribeiro04) a23795@alunos.ipca.pt
-
-## Smart Campus -- Ipca Gym
-
-![Diagram](IpcaGym.png)
+- [ ] communicate with client
+- [ ] payments
+- [ ] query data
+- [ ] login
+- [x] database connection
+- [ ] training plan
+- [ ] invoices
+- [x] initial classes
+- [ ] financial analysis
 
 ## License
 

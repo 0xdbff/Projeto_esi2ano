@@ -48,7 +48,7 @@ public static class DataBase
     private const string User = "postgres";
 
     /// <summary> Database name. </summary>
-    private const string DbName = "IpcaGym";
+    private const string DbName = "ipcagym";
 
     /// <summary> Admin Database name. /summary>
     private const string AdminDbName = "postgres";
@@ -98,12 +98,17 @@ public static class DataBase
         }
     }
 
-    public static async Task<int> AdminCmdExecuteNonQueryAsync(string? @sql)
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    private static async Task<int> AdminCmdExecuteNonQueryAsync(string? @sql)
     {
         try
         {
             // Open a connection that will live through the execution of this method's
-            // stack frame.
+            // stack frame with the Admin Database.
             var dataSourceBuilder = new NpgsqlDataSourceBuilder(AdminConnString);
             await using var dataSource = dataSourceBuilder.Build();
 
@@ -149,7 +154,6 @@ public static class DataBase
                      currentField++)
                 {
                     fieldList.Add(currentField, reader.GetValue(currentField));
-                    Console.WriteLine(reader.GetValue(currentField).GetType());
                 }
 
                 values.Add(fieldList);
@@ -164,63 +168,95 @@ public static class DataBase
         }
     }
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="tableName"></param>
-    /// <param name="column"></param>
-    /// <returns></returns>
-    // public static async Task<object?> Get(string? sql)
-    //{
-    //     try
-    //     {
-    //         // Open a connection that will live through the execution of this
-    //         method's
-    //         // stack frame.
-    //         await using var conn = new NpgsqlConnection(ConnString);
-    //         await conn.OpenAsync();
-
-    //        await using var cmd =
-    //            new NpgsqlCommand($@"SELECT * FROM {tableName}", conn);
-    //        await using var reader = await cmd.ExecuteReaderAsync();
-
-    //        var a = reader.FieldCount;
-
-    //        await reader.ReadAsync();
-
-    //        return reader.GetValue(column);
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        Log.Error(e);
-    //        return default;
-    //    }
-    //}
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="tableName"></param>
-    /// <param name="column"></param>
-    /// <returns></returns>
-    public static async Task<object?> RunSql(string? sql)
+    public static async Task<T?> CmdExecuteQueryAsync<T>(string? @sql)
+        where T : System.IConvertible
     {
         try
         {
             // Open a connection that will live through the execution of this method's
             // stack frame.
-            await using var conn = new NpgsqlConnection(ConnString);
-            await conn.OpenAsync();
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnString);
+            await using var dataSource = dataSourceBuilder.Build();
 
-            await using var cmd = new NpgsqlCommand(sql, conn);
-
+            await using var cmd = dataSource.CreateCommand(sql);
             await using var reader = await cmd.ExecuteReaderAsync();
 
-            var a = reader.FieldCount;
+            if (await reader.ReadAsync())
+                return await reader.GetFieldValueAsync<T>(0);
 
-            await reader.ReadAsync();
+            // Query with no value
+            return default;
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+            return default;
+        }
+    }
 
-            return reader.GetValue(0);
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    private static async Task<List<Dictionary<int, object?>>?>
+    AdminCmdExecuteQueryAsync(string? @sql)
+    {
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame with the Admin Database.
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(AdminConnString);
+            await using var dataSource = dataSourceBuilder.Build();
+
+            await using var cmd = dataSource.CreateCommand(sql);
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            // A List of Dictionary with key value pairs, to hold return values
+            // from an unknown query.
+            var values = new List<Dictionary<int, object?>>();
+
+            while (await reader.ReadAsync())
+            {
+                // A generic list to hold all the columns from the Table.
+                var fieldList = new Dictionary<int, object?>();
+
+                for (var currentField = 0; currentField < reader.FieldCount;
+                     currentField++)
+                {
+                    fieldList.Add(currentField, reader.GetValue(currentField));
+                }
+
+                values.Add(fieldList);
+            }
+
+            return values;
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+            return default;
+        }
+    }
+
+    private static async Task<T?> AdminCmdExecuteQueryAsync<T>(string? @sql)
+        where T : System.IConvertible
+    {
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame with the Admin Database.
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(AdminConnString);
+            await using var dataSource = dataSourceBuilder.Build();
+
+            await using var cmd = dataSource.CreateCommand(sql);
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+                return await reader.GetFieldValueAsync<T>(0);
+
+            // Query with no value
+            return default;
         }
         catch (Exception e)
         {
@@ -258,12 +294,12 @@ public static class DataBase
     /// on failure exit the program.
     /// </summary>
     /// <returns> An awaitable Task. </returns>
-    private static async Task createDatabaseAsync()
+    private static async Task<int?> createDatabaseAsync()
     {
         try
         {
             // Create a database
-            await AdminCmdExecuteNonQueryAsync($"CREATE DATABASE {DbName}");
+            return await AdminCmdExecuteNonQueryAsync($"CREATE DATABASE {DbName}");
         }
         catch (NpgsqlException e)
         {
@@ -272,6 +308,8 @@ public static class DataBase
 
             // Exit the executable with an error code.
             Environment.Exit(1);
+
+            return default;
         }
     }
 
@@ -283,56 +321,49 @@ public static class DataBase
     {
         try
         {
-            // Open a connection 'Admin database' that will live through the execution
-            // of this method's stack frame.
-            var dataSourceBuilder = new NpgsqlDataSourceBuilder(AdminConnString);
-            await using var dataSource = dataSourceBuilder.Build();
-
             // Test if there is a database with {DbName}
-            await using var cmd = dataSource.CreateCommand(
-                @$"SELECT datname FROM pg_catalog.pg_database 
-                WHERE lower(datname) = lower('{DbName}');");
-            await using var reader = await cmd.ExecuteReaderAsync();
+            var queryReturn = await AdminCmdExecuteQueryAsync<string>(
+                $"SELECT datname FROM pg_catalog.pg_database" +
+                $"WHERE lower(datname) = lower('{DbName}')");
 
-            // Check database
-            if (reader.Read())
+            if (queryReturn == DbName.ToLower())
             {
-                // Ensure all the tables are present.
+                // Ensure database tables.
                 await ensureDataBaseTables();
+
+                return;
             }
-            else
-            {
-                // Database does not exits, create one and Warn the admin.
-                throw new NpgsqlException($"Database {DbName} Does not exist!!");
-            }
+
+            throw new NpgsqlException($"Database {DbName} does not exist");
         }
         catch (NpgsqlException e)
         {
             Log.Error(e);
             Log.Warn(
                 $"Proceeding without database '{DbName}', no values are present...");
-            Log.Warn(
-                $"Creating a new one with name '{DbName}' as user {User}.");
+            Log.Warn($"Creating a new one with name '{DbName}' as user {User}.");
 
             // Create Database.
             await createDatabaseAsync();
+
             // Create Tables
             await ensureDataBaseTables();
+
+            // Try Loading database backups if there are any.
+            Log.Warn($"Attempting to load DataBase backups");
         }
         catch (Exception e)
         {
             Log.Error(e);
-            //
+            Log.Error("Cannot proceed, exiting program with exit code 1");
+
+            // Exit the executable with an error code.
+            Environment.Exit(1);
         }
     }
 
     public static async Task Test()
     {
-        // try
-        // {
-        //     // var insert = await Insert(@$"insert into
-        //     // logindata(username,hashedpassword) VALUES ('username23',
-        //     'hash')");
         //
         //     var values = await GetValues("select * from logindata")
         //         as List<Dictionary<int, object>>;
@@ -352,16 +383,10 @@ public static class DataBase
         //
         try
         {
-            // await using var conn = new NpgsqlConnection(ConnString);
-            // await conn.OpenAsync();
-
-            // Create the database if it does not exist.
-            // await using var cmd = new NpgsqlCommand(@"create database
-            // dbname", conn);
-
-            await Init();
-            // return (await cmd.ExecuteNonQueryAsync());
-            // return 3;
+            // await Init();
+            var insert = await CmdExecuteNonQueryAsync(@$"insert into
+             logindata(username,hashedpassword) VALUES ('username23',
+            'hash')");
         }
         catch (Exception e)
         {

@@ -1,3 +1,5 @@
+using static DataBase.DataBase;
+
 namespace Host;
 
 /// <summary>
@@ -17,12 +19,20 @@ internal abstract class Person : Gym
     /// <summary>
     ///     the user's first name.
     /// </summary>
-    internal string? FirstName { get; set; }
+    internal static string? FirstName
+    {
+        get
+        {
+            return CmdExecuteQueryAsync<string>(
+                "SELECT"
+            ).Result;
+        }
+    }
 
     /// <summary>
     ///     The user's last name.
     /// </summary>
-    internal string? LastName { get; set; }
+    internal string? LastName { get; set; } 
 
     /// <summary>
     ///     The user's gender.

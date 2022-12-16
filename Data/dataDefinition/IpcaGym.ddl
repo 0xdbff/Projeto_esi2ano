@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS LoginData (
   Username         varchar(255) NOT NULL, 
   HashedPassword   varchar(255) NOT NULL, 
   TwoFactorAuthApp varchar(255), 
-  LastLogin        date, 
+  LastLogin        timestamp with time zone, 
   PRIMARY KEY (Username));
 
 CREATE TABLE IF NOT EXISTS emailInfo (

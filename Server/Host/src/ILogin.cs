@@ -1,4 +1,6 @@
-﻿namespace Host;
+﻿using static DataBase.DataBase;
+
+namespace Host;
 
 /// <summary>
 /// 
@@ -98,17 +100,32 @@ internal interface ILogin
         /// <summary>
         /// 
         /// </summary>
-        internal string? Username { get; set; }
+        internal readonly string? Username;
 
         /// <summary>
         /// 
         /// </summary>
-        internal string? HashedPassword { get; set; }
+        internal readonly string? HashedPassword;
 
         /// <summary>
         /// 
         /// </summary>
-        internal DateTime LastLogin { get; set; }
+        internal readonly bool TwoFactorAuth;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal readonly DateTime LastLogin;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal Task<string?> PassHashGetAsync
+    {
+        get => CmdExecuteQueryAsync<string>(
+            "SELECT hashedpassword From logindata WHERE username='db4'"
+        );
     }
 
     #endregion

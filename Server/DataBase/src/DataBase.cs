@@ -91,7 +91,7 @@ public static class DataBase
             await using var cmd = dataSource.CreateCommand(sql);
             return (await cmd.ExecuteNonQueryAsync());
         }
-        catch (Exception e)
+        catch (NpgsqlException e)
         {
             Log.Error(e);
             return default;
@@ -116,7 +116,7 @@ public static class DataBase
             await using var cmd = dataSource.CreateCommand(sql);
             return (await cmd.ExecuteNonQueryAsync());
         }
-        catch (Exception e)
+        catch (NpgsqlException e)
         {
             Log.Error(e);
             return default;
@@ -161,7 +161,7 @@ public static class DataBase
 
             return values;
         }
-        catch (Exception e)
+        catch (NpgsqlException e)
         {
             Log.Error(e);
             return default;
@@ -182,15 +182,17 @@ public static class DataBase
             await using var reader = await cmd.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
-                return await reader.GetFieldValueAsync<T>(0);
+                return await reader.GetFieldValueAsync<T?>(0);
 
             // Query with no value
-            return default;
+            // !TODO create custom exceptions
+            throw new Exception("No data");
         }
-        catch (Exception e)
+        catch (NpgsqlException e)
         {
             Log.Error(e);
-            return default;
+            // !TODO create custom exceptions
+            throw new Exception("No data");
         }
     }
 
@@ -232,7 +234,7 @@ public static class DataBase
 
             return values;
         }
-        catch (Exception e)
+        catch (NpgsqlException e)
         {
             Log.Error(e);
             return default;
@@ -253,15 +255,17 @@ public static class DataBase
             await using var reader = await cmd.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
-                return await reader.GetFieldValueAsync<T>(0);
+                return await reader.GetFieldValueAsync<T?>(0);
 
             // Query with no value
-            return default;
+            // !TODO create custom exceptions
+            throw new Exception("No data");
         }
-        catch (Exception e)
+        catch (NpgsqlException e)
         {
             Log.Error(e);
-            return default;
+            // !TODO create custom exceptions
+            throw new Exception("No data");
         }
     }
 

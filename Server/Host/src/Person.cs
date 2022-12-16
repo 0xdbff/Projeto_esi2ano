@@ -1,3 +1,4 @@
+using System.Text.Json;
 using static DataBase.DataBase;
 
 namespace Host;
@@ -19,30 +20,25 @@ internal abstract class Person : Gym
     /// <summary>
     ///     the user's first name.
     /// </summary>
-    internal static string? FirstName
+    internal string? FirstName
     {
-        get
-        {
-            return CmdExecuteQueryAsync<string>(
-                "SELECT"
-            ).Result;
-        }
+        get { return CmdExecuteQueryAsync<string>("SELECT").Result; }
     }
 
     /// <summary>
     ///     The user's last name.
     /// </summary>
-    internal string? LastName { get; set; } 
+    internal string? LastName { get; }
 
     /// <summary>
     ///     The user's gender.
     /// </summary>
-    internal Gender Gender { get; set; }
+    internal Gender Gender { get; }
 
     /// <summary>
     ///     The user's date of birth.
     /// </summary>
-    internal DateOnly DateOfBirth { get; set; }
+    internal DateOnly DateOfBirth { get; }
 
     #region methods
 
@@ -55,6 +51,8 @@ internal abstract class Person : Gym
     #endregion
 
     #region abstract_methods
+
+    // abstract private protected Task InsertUser(UserData user);
 
     #endregion
 

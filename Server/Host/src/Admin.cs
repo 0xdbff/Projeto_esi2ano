@@ -1,4 +1,5 @@
 using Host;
+using static DataBase.DataBase;
 
 namespace Host;
 
@@ -7,6 +8,12 @@ namespace Host;
 /// </summary>
 internal class Admin : Person, ILogin
 {
+    private static async Task insertDefaultAdmin()
+    {
+        await CmdExecuteNonQueryAsync("");
+        //
+    }
+
     /// <summary>
     ///
     /// </summary>
@@ -18,4 +25,5 @@ internal class Admin : Person, ILogin
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     ILogin.LoginStatus ILogin.Login() { throw new NotImplementedException(); }
+
 }

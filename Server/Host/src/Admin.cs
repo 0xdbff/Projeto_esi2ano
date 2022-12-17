@@ -1,5 +1,5 @@
 using Host;
-using static DataBase.DataBase;
+using static Data.DataBase;
 
 namespace Host;
 
@@ -17,13 +17,20 @@ internal class Admin : Person, ILogin
     /// <summary>
     ///
     /// </summary>
-    public Admin() { }
+    internal Admin() { }
 
+    internal Admin(string firstName, string lastName, Gender gender,
+                   DateTime dateOfBirth)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Gender = gender;
+        DateOfBirth = dateOfBirth;
+    }
     /// <summary>
     ///
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     ILogin.LoginStatus ILogin.Login() { throw new NotImplementedException(); }
-
 }

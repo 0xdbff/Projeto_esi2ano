@@ -1,7 +1,7 @@
 ﻿using Npgsql;
 using static Utils.Logger;
 
-namespace DataBase;
+namespace Data;
 
 /// <summary>
 ///

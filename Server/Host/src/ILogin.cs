@@ -1,4 +1,4 @@
-﻿using static DataBase.DataBase;
+﻿using static Data.DataBase;
 
 namespace Host;
 

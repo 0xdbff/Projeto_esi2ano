@@ -1,5 +1,6 @@
 using System.Text.Json;
-using static DataBase.DataBase;
+using System.Text.Json.Serialization;
+using static Data.DataBase;
 
 namespace Host;
 
@@ -7,38 +8,42 @@ namespace Host;
 /// </summary>
 internal enum Gender
 {
-    Male,
-    Female,
     Unspecified,
+    Female,
+    Male,
 }
 
+// [JsonSerializable(typeof(Person))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              PropertyNamingPolicy =
+//                                  JsonKnownNamingPolicy.CamelCase,
+//                              WriteIndented = true)]
+// internal partial class PersonJsonContext : JsonSerializerContext { }
+
 /// <summary>
-///     An abstract class
+///
 /// </summary>
 internal abstract class Person : Gym
 {
     /// <summary>
-    ///     the user's first name.
+    ///     The user's first name.
     /// </summary>
-    internal string? FirstName
-    {
-        get { return CmdExecuteQueryAsync<string>("SELECT").Result; }
-    }
+    internal string? FirstName { get; set; }
 
     /// <summary>
     ///     The user's last name.
     /// </summary>
-    internal string? LastName { get; }
+    internal string? LastName { get; set; }
 
     /// <summary>
     ///     The user's gender.
     /// </summary>
-    internal Gender Gender { get; }
+    internal Gender Gender { get; set; }
 
     /// <summary>
     ///     The user's date of birth.
     /// </summary>
-    internal DateOnly DateOfBirth { get; }
+    internal DateTime DateOfBirth { get; set; }
 
     #region methods
 

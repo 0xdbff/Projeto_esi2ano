@@ -27,6 +27,7 @@ internal class Admin : Person, ILogin
         Gender = gender;
         DateOfBirth = dateOfBirth;
     }
+
     /// <summary>
     ///
     /// </summary>

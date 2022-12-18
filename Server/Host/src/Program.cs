@@ -14,22 +14,36 @@ internal class Program
 
         try
         {
-            // var val = new Test
-            // {
-            //     // FirstName = "sldkfj",
-            //     LastName = "sdlfkj",
-            //     age = "23",
-            //     gender = "M",
-            // };
-            //
-            // var json = JsonSerializer.Serialize(val,
-            // PersonJsonContext.Default.Test);
-            //
-            // Console.WriteLine(json);
+
+            var val = new Client();
+
+            val.ClientType = ClientType.Academic;
+            val.FirstName = "his";
+            val.LastName = "his";
+            val.DateOfBirth = DateTime.Now;
+
+            Console.WriteLine(val.LastName);
+
+            var json =
+                JsonSerializer.Serialize(val, ClientJsonContext.Default.Client);
+
+            Console.WriteLine(json);
             //
             // var test1 =
             //     JsonSerializer.Deserialize(json, PersonJsonContext.Default.Test);
-            var client1 = new Client();
+            // var client1 = new Client
+            // {
+            //     FirstName = "this",
+            // };
+            //
+            // // client1.DateOfBirth = DateTime.Now;
+            // // client1.LastName = "somehing";
+            //
+            // var json =
+            //     JsonSerializer.Serialize(client1,
+            //     PersonJsonContext.Default.Person);
+            //
+            // Console.WriteLine(json);
 
             // var client1 = new Client();
             //
@@ -69,17 +83,4 @@ internal class Program
             Log.Error(e);
         }
     }
-
-    // Define a class to hold the data from the API response
-    class ApiResponse
-    {
-        public string? Message { get; set; }
-    }
-
-    // internal async Task GetResponse()
-    // {
-    //     string response = await client.GetStringAsync(
-    //         "https://jsonplaceholder.typicode.com/todos/1");
-    //     Console.WriteLine(response);
-    // }
 }

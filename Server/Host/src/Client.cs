@@ -50,13 +50,12 @@ internal partial class Client : Person, ILogin
     /// <summary>
     /// The type of the client assigned by the system.
     /// </summary>
-    internal ClientType ClientType { get; private set; }
+    public ClientType ClientType { get; set; }
 
     /// <summary>
     /// The client's height in meters.
     /// </summary>
     private double _height;
-
 
     /// <summary>
     /// The client's weight in kilograms.
@@ -117,7 +116,7 @@ internal partial class Client : Person, ILogin
         try
         {
             _height =
-                height < 2.4 && height > 1.0
+                height is < 2.4 and > 1.0
                     ? height
                     : throw new InvalidClientDataException("Height is not Valid");
         }
@@ -136,7 +135,7 @@ internal partial class Client : Person, ILogin
         try
         {
             _weight =
-                weight < 200 && weight > 20
+                weight is < 200 and > 20
                     ? weight
                     : throw new InvalidClientDataException("Weight is not Valid");
         }

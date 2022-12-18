@@ -13,12 +13,25 @@ internal enum Gender
     Male,
 }
 
-// [JsonSerializable(typeof(Person))]
-// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-//                              PropertyNamingPolicy =
-//                                  JsonKnownNamingPolicy.CamelCase,
-//                              WriteIndented = true)]
-// internal partial class PersonJsonContext : JsonSerializerContext { }
+/// <summary>
+///
+/// </summary>
+[JsonSerializable(typeof(Person))]
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+                             PropertyNamingPolicy =
+                                 JsonKnownNamingPolicy.CamelCase,
+                             WriteIndented = true)]
+internal partial class PersonJsonContext : ClientJsonContext { }
+
+/// <summary>
+///
+/// </summary>
+[JsonSerializable(typeof(Client))]
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+                             PropertyNamingPolicy =
+                                 JsonKnownNamingPolicy.CamelCase,
+                             WriteIndented = true)]
+internal partial class ClientJsonContext : JsonSerializerContext { }
 
 /// <summary>
 ///
@@ -51,7 +64,7 @@ internal abstract class Person : Gym
     ///     Change the user's address.
     /// </summary>
     /// <param name="addr">the user's new address</param>
-    private protected void ChangeAddress(string? addr) => _address = addr;
+    private protected void ChangeAddress(string? addr) => Address = addr;
 
     #endregion
 
@@ -66,12 +79,12 @@ internal abstract class Person : Gym
     /// <summary>
     /// The user's nif.
     /// </summary>
-    private protected uint _nif;
+    private protected uint Nif { get; set; }
 
     /// <summary>
     /// The user's address.
     /// </summary>
-    private protected string? _address;
+    private protected string? Address { get; set; }
 
     /// <summary>
     /// When the user registered the account.

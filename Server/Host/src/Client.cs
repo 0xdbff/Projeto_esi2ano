@@ -46,6 +46,14 @@ internal enum Bmi
 /// <summary>
 ///
 /// </summary>
+[JsonSerializable(typeof(Client))]
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+                             WriteIndented = true)]
+internal partial class ClientJsonContext : JsonSerializerContext { }
+
+/// <summary>
+///
+/// </summary>
 internal partial class Client : Person, ILogin
 {
     #region attributes
@@ -170,8 +178,6 @@ internal partial class Client : Person, ILogin
     {
         var client1 = new Client();
 
-        client1.FirstName = "lj";
-        client1.LastName = "lj";
         client1.ClientType = ClientType.Common;
 
         var json =

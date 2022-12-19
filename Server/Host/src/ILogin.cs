@@ -1,4 +1,8 @@
-﻿using static Data.DataBase;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Net;
+
+using static Data.DataBase;
 
 namespace Host;
 
@@ -18,15 +22,10 @@ internal enum UserType
 /// <summary>
 ///
 /// </summary>
-internal enum IpType { v4, v6 }
-
-/// <summary>
-///
-/// </summary>
-internal struct Ip
-{
-    internal IpType Type { get; set; }
-}
+[JsonSerializable(typeof(ILogin.LoginAttempt))]
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+                             WriteIndented = true)]
+internal partial class LoginAttemptJsonContext : JsonSerializerContext { }
 
 /// <summary>
 ///
@@ -41,28 +40,45 @@ internal interface ILogin
         /// <summary> </summary>
         Email,
         /// <summary> </summary>
+        Phone,
+        /// <summary> </summary>
         UserName,
     }
 
     /// <summary>
     ///
     /// </summary>
-    internal struct UsedCredentials
+    internal struct LoginAttempt
     {
         /// <summary>
         ///
         /// </summary>
-        internal AuthType AuthType { get; set; }
+        public AuthType AuthType { get; set; }
 
         /// <summary>
         ///
         /// </summary>
-        internal string? HashedPassword { get; private set; }
+        public string Authentication { get; set; }
 
         /// <summary>
         ///
         /// </summary>
-        public string? AuthCode { get; private set; }
+        public string? HashedPassword { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public string? AuthCode { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public DateTime date { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public LoginStatus loginStatus { get; set; }
     }
 
     /// <summary>
@@ -96,22 +112,63 @@ internal interface ILogin
         /// <summary>
         ///
         /// </summary>
-        internal readonly string? Username;
+        public string? Username { get; private set; }
 
         /// <summary>
         ///
         /// </summary>
-        internal readonly string? HashedPassword;
+        public string? HashedPassword { get; private set; }
 
         /// <summary>
         ///
         /// </summary>
-        internal readonly bool TwoFactorAuth;
+        public bool TwoFactorAuth { get; private set; }
 
         /// <summary>
         ///
         /// </summary>
-        internal readonly DateTime LastLogin;
+        public DateTime LastLogin { get; private set; }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    internal class Device
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public IPAddress? iP { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public DateTime LogedDate { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public string? Os {get; set;}
+
+        /// <summary>
+        ///
+        /// </summary>
+        public string? HostName {get; set;}
+
+        /// <summary>
+        ///
+        /// </summary>
+        public string? Browser {get; set;}
+
+        /// <summary>
+        ///
+        /// </summary>
+        public double IpLocationLat {get; set;}
+
+        /// <summary>
+        ///
+        /// </summary>
+        public double IpLocationLon {get; set;}
     }
 
     /// <summary>
@@ -152,7 +209,7 @@ internal interface ILogin
     ///
     /// </summary>
     /// <returns></returns>
-    internal static List<UsedCredentials>? GetCredentialsHistory()
+    internal static List<LoginAttempt>? GetCredentialsHistory()
     {
         return default;
     }

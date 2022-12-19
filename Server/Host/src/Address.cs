@@ -50,17 +50,40 @@ internal class Address
     /// </summary>
     public string? Localidade { get; set; }
 
-    public static string? AddressFromClassToJson(Address address)
+    /// <summary>
+    /// /
+    /// </summary>
+    /// <param name="address"></param>
+    /// <returns></returns>
+    public static string? FromClassToJson(Address address)
     {
         return JsonSerializer.Serialize(address,
                                         AddressJsonContext.Default.Address);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public Address() { }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="json"></param>
+    /// <returns></returns>
     public static Address? FromJson(string json) =>
         JsonSerializer.Deserialize(json, AddressJsonContext.Default.Address);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="postalCode"></param>
+    /// <param name="country"></param>
+    /// <param name="city"></param>
+    /// <param name="lastUpdate"></param>
+    /// <param name="aditionalInfo"></param>
+    /// <param name="houseNum"></param>
+    /// <param name="localidade"></param>
     public Address(int postalCode, string country, string city,
                    DateTime lastUpdate, string? aditionalInfo, int houseNum,
                    string localidade)

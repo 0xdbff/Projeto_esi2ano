@@ -1,4 +1,3 @@
-using Host;
 using static Data.DataBase;
 
 namespace Host;
@@ -15,7 +14,7 @@ internal class Admin : Person, ILogin
         private double income;
     }
 
-    private static List<analyisByMonth> analysis;
+    private static List<analyisByMonth>? analysis;
 
     private static async Task insertDefaultAdmin()
     {
@@ -30,19 +29,21 @@ internal class Admin : Person, ILogin
 
     internal Admin(string firstName, string lastName, Gender gender,
                    DateTime dateOfBirth)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-        Gender = gender;
-        DateOfBirth = dateOfBirth;
-    }
+    { }
 
     /// <summary>
     ///
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    ILogin.LoginStatus ILogin.Login() { throw new NotImplementedException(); }
+    ILogin.LoginStatus ILogin.Login()
+    {
+        ILogin.LoginAttempt n = new();
+
+        n.loginStatus = ILogin.LoginStatus.LoggedIn;
+
+        return ILogin.LoginStatus.AuthCodeExpired;
+    }
 
     private protected override Task InsertUser(Person user)
     {

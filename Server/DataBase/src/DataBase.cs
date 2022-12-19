@@ -168,6 +168,13 @@ public static class DataBase
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public static async Task<T?> CmdExecuteQueryAsync<T>(string? @sql)
         where T : System.IConvertible
     {
@@ -241,6 +248,13 @@ public static class DataBase
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     private static async Task<T?> AdminCmdExecuteQueryAsync<T>(string? @sql)
         where T : System.IConvertible
     {

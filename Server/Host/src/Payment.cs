@@ -1,52 +1,23 @@
 namespace Host;
 
+using Data;
+using static Utils.Logger;
 using static Data.DataBase;
 
 internal enum CcType
 {
+    /// <summary> </summary>
+    Invalid,
     /// <summary> </summary>
     Visa,
     /// <summary> </summary>
     MasterCard,
 }
 
-internal class CreditCard
-{
-    internal UInt64 CcNum { get; }
-
-    internal DateTime ExpiryDate { get; }
-
-    internal DateTime InsertedDate { get; }
-
-    internal string? SecurityCode { get; }
-
-    internal string? CcName { get; }
-
-    internal CcType CreditCardType { get; }
-
-    internal CreditCard(UInt64 ccNum, DateTime expiryDate, DateTime insertedDate,
-                        string? securityCode, string? ccName,
-                        CcType creditCardType)
-    {
-        CcNum = ccNum;
-        ExpiryDate = expiryDate;
-        InsertedDate = insertedDate;
-        SecurityCode = securityCode;
-        CcName = ccName;
-        CreditCardType = creditCardType;
-    }
-
-    internal static async Task<int>
-    InsertCreditCard(Guid clientId, CreditCard cc) => await CmdExecuteNonQueryAsync(
-        $"INSERT into creditcard (CcNum, ClientId, ExpiryDate, SecurityCode, NameInCC)" +
-        $"WITH VALUES ({cc.CcNum}, {clientId}, {cc.ExpiryDate},{cc.InsertedDate},{cc.CcName}," +
-        $"{cc.CreditCardType})");
-}
-
 /// <summary>
 ///
 /// </summary>
-internal class Payment : Client
+internal class Payment
 {
 
     /// <summary>

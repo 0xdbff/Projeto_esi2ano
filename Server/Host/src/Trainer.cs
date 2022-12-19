@@ -22,5 +22,5 @@ internal class Trainer : Person, ILogin
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    ILogin.LoginStatus ILogin.Login() { throw new NotImplementedException(); }
+    LoginStatus ILogin.Login() { throw new NotImplementedException(); }
 }

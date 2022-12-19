@@ -1,4 +1,3 @@
-using Host;
 using Host.Exceptions;
 using static Utils.Logger;
 
@@ -167,7 +166,10 @@ internal partial class Client : Person, ILogin
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    ILogin.LoginStatus ILogin.Login() { throw new NotImplementedException(); }
+    LoginStatus ILogin.Login()
+    {
+        throw new NotImplementedException();
+    }
 
     private protected override Task InsertUser(Person user)
     {

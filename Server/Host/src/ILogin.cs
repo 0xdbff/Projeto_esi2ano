@@ -19,36 +19,31 @@ internal enum UserType
     Client
 }
 
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(ILogin.LoginAttempt))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class LoginAttemptJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
-internal interface ILogin
-{
     /// <summary>
     ///
     /// </summary>
-    public enum AuthType
+    public enum LoginStatus
     {
         /// <summary> </summary>
-        Email,
+        LoggedIn,
         /// <summary> </summary>
-        Phone,
+        LoggedOut,
         /// <summary> </summary>
-        UserName,
+        DeviceLimitViolated,
+        /// <summary> </summary>
+        InvalidCredentials,
+        /// <summary> </summary>
+        UnauthoryzedLocation,
+        /// <summary> </summary>
+        WaitingForAuthCode,
+        /// <summary> </summary>
+        AuthCodeExpired,
     }
 
     /// <summary>
     ///
     /// </summary>
-    internal struct LoginAttempt
+    internal class LoginAttempt
     {
         /// <summary>
         ///
@@ -58,7 +53,7 @@ internal interface ILogin
         /// <summary>
         ///
         /// </summary>
-        public string Authentication { get; set; }
+        public string? Authentication { get; set; }
 
         /// <summary>
         ///
@@ -84,30 +79,20 @@ internal interface ILogin
     /// <summary>
     ///
     /// </summary>
-    public enum LoginStatus
+    public enum AuthType
     {
         /// <summary> </summary>
-        LoggedIn,
+        Email,
         /// <summary> </summary>
-        LoggedOut,
+        Phone,
         /// <summary> </summary>
-        DeviceLimitViolated,
-        /// <summary> </summary>
-        InvalidCredentials,
-        /// <summary> </summary>
-        UnauthoryzedLocation,
-        /// <summary> </summary>
-        WaitingForAuthCode,
-        /// <summary> </summary>
-        AuthCodeExpired,
+        UserName,
     }
-
-    #region data
 
     /// <summary>
     ///
     /// </summary>
-    internal struct Data
+    internal class Data
     {
         /// <summary>
         ///
@@ -130,46 +115,24 @@ internal interface ILogin
         public DateTime LastLogin { get; private set; }
     }
 
-    /// <summary>
-    ///
-    /// </summary>
-    internal class Device
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        public IPAddress? iP { get; set; }
+/// <summary>
+///
+/// </summary>
+[JsonSerializable(typeof(LoginAttempt))]
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+                             WriteIndented = true)]
+internal partial class LoginAttemptJsonContext : JsonSerializerContext { }
 
-        /// <summary>
-        ///
-        /// </summary>
-        public DateTime LogedDate { get; set; }
+/// <summary>
+///
+/// </summary>
+internal interface ILogin
+{
 
-        /// <summary>
-        ///
-        /// </summary>
-        public string? Os {get; set;}
 
-        /// <summary>
-        ///
-        /// </summary>
-        public string? HostName {get; set;}
 
-        /// <summary>
-        ///
-        /// </summary>
-        public string? Browser {get; set;}
+    #region data
 
-        /// <summary>
-        ///
-        /// </summary>
-        public double IpLocationLat {get; set;}
-
-        /// <summary>
-        ///
-        /// </summary>
-        public double IpLocationLon {get; set;}
-    }
 
     /// <summary>
     ///

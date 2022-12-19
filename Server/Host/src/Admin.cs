@@ -31,21 +31,17 @@ internal class Admin : Person, ILogin
                    DateTime dateOfBirth)
     { }
 
+    private protected override Task InsertUser(Person user)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     ///
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    ILogin.LoginStatus ILogin.Login()
-    {
-        ILogin.LoginAttempt n = new();
-
-        n.loginStatus = ILogin.LoginStatus.LoggedIn;
-
-        return ILogin.LoginStatus.AuthCodeExpired;
-    }
-
-    private protected override Task InsertUser(Person user)
+    LoginStatus ILogin.Login()
     {
         throw new NotImplementedException();
     }

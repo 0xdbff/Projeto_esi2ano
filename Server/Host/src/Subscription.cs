@@ -3,7 +3,7 @@ namespace Host;
 /// <summary>
 /// 
 /// </summary>
-internal class Subscription : Payment
+internal class Subscription
 {
     
 }

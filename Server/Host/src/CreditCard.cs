@@ -133,6 +133,11 @@ internal class CreditCard
     GetCLientCreditCardsFromDb(Guid clientId) => await CmdExecuteQueryAsync(
         $"SELECT * FROM creditcard WHERE ClientID == {clientId}");
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="clientId"></param>
+    /// <returns></returns>
     internal static async Task<List<CreditCard>?>
     GetClientCreditCards(Guid clientId)
     {

@@ -1,6 +1,6 @@
 namespace Host;
 
-internal class Statistics : Client
+internal class Statistics
 {
     //
 }

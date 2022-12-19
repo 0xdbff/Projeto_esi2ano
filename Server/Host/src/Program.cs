@@ -14,20 +14,8 @@ internal class Program
 
         try
         {
+            Client.test();
 
-            var val = new Client();
-
-            val.ClientType = ClientType.Academic;
-            val.FirstName = "his";
-            val.LastName = "his";
-            val.DateOfBirth = DateTime.Now;
-
-            Console.WriteLine(val.LastName);
-
-            var json =
-                JsonSerializer.Serialize(val, ClientJsonContext.Default.Client);
-
-            Console.WriteLine(json);
             //
             // var test1 =
             //     JsonSerializer.Deserialize(json, PersonJsonContext.Default.Test);

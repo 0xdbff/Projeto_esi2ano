@@ -15,17 +15,17 @@ internal class Gym
     /// <summary>
     /// 
     /// </summary>
-    private static uint _numClientes;
+    public static uint numClientes;
 
     /// <summary>
     /// 
     /// </summary>
-    private static uint _numFuncionarios;
+    private static uint numFuncionarios;
 
     /// <summary>
     /// 
     /// </summary>
-    private static uint _lotacaoTotal;
+    private static uint lotacaoTotal;
 
     /// <summary>
     ///
@@ -47,7 +47,7 @@ internal class Gym
     /// <summary>
     /// The gym's address.
     /// </summary>
-    internal static string? _gymAddress { get; private set; }
+    internal static string? gymAddress { get; private set; }
     
     #endregion
 }

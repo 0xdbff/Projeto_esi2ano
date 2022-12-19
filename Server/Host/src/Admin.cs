@@ -8,6 +8,15 @@ namespace Host;
 /// </summary>
 internal class Admin : Person, ILogin
 {
+    private struct analyisByMonth
+    {
+        private DateOnly month;
+        private double expenses;
+        private double income;
+    }
+
+    private static List<analyisByMonth> analysis;
+
     private static async Task insertDefaultAdmin()
     {
         await CmdExecuteNonQueryAsync("");
@@ -34,4 +43,9 @@ internal class Admin : Person, ILogin
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     ILogin.LoginStatus ILogin.Login() { throw new NotImplementedException(); }
+
+    private protected override Task InsertUser(Person user)
+    {
+        throw new NotImplementedException();
+    }
 }

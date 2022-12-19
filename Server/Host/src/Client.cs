@@ -2,6 +2,9 @@ using Host;
 using Host.Exceptions;
 using static Utils.Logger;
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace Host;
 
 /// <summary>
@@ -157,6 +160,25 @@ internal partial class Client : Person, ILogin
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     ILogin.LoginStatus ILogin.Login() { throw new NotImplementedException(); }
+
+    private protected override Task InsertUser(Person user)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static void test()
+    {
+        var client1 = new Client();
+
+        client1.FirstName = "lj";
+        client1.LastName = "lj";
+        client1.ClientType = ClientType.Common;
+
+        var json =
+            JsonSerializer.Serialize(client1, ClientJsonContext.Default.Client);
+
+        Console.WriteLine(json);
+    }
 
     #endregion
 }

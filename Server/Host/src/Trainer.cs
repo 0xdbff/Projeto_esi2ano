@@ -12,6 +12,11 @@ internal class Trainer : Person, ILogin
     /// </summary>
     public Trainer() { }
 
+    private protected override Task InsertUser(Person user)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     ///
     /// </summary>

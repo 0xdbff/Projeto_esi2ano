@@ -1,8 +1,8 @@
-namespace Host;
-
 using Data;
 using static Utils.Logger;
 using static Data.DataBase;
+
+namespace Host;
 
 /// <summary>
 /// 

@@ -3,15 +3,7 @@ namespace Host;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Address))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             // PropertyNamingPolicy =
-                             //     JsonKnownNamingPolicy.CamelCase,
-                             WriteIndented = true)]
-internal partial class AddressJsonContext : JsonSerializerContext { }
+using Host.Json;
 
 /// <summary>
 ///

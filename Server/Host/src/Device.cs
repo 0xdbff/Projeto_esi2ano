@@ -9,14 +9,6 @@ namespace Host;
 /// <summary>
 ///
 /// </summary>
-[JsonSerializable(typeof(Device))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class DeviceJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
 internal class Device
 {
     /// <summary>

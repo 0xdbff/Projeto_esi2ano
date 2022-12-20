@@ -4,6 +4,8 @@ using static Utils.Logger;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Host.Json;
+
 namespace Host;
 
 /// <summary>
@@ -45,14 +47,6 @@ internal enum Bmi
 /// <summary>
 ///
 /// </summary>
-[JsonSerializable(typeof(Client))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class ClientJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
 internal partial class Client : Person, ILogin
 {
     #region attributes
@@ -60,22 +54,30 @@ internal partial class Client : Person, ILogin
     /// <summary>
     /// The type of the client assigned by the system.
     /// </summary>
-    public ClientType ClientType { get; set; }
+    public ClientType ClientType { get; private set; }
+
+    /// <summary>
+    /// </summary>
+    public Subscription? subscription { get; private set; }
+
+    /// <summary>
+    /// </summary>
+    private CreditCard? cc;
 
     /// <summary>
     /// The client's height in meters.
     /// </summary>
-    private double _height;
+    public double Height { get; private set; }
 
     /// <summary>
     /// The client's weight in kilograms.
     /// </summary>
-    private double _weight;
+    public double Weight { get; private set; }
 
     /// <summary>
     /// The client's BMI value.
     /// </summary>
-    internal double BmiValue { get => _weight / (_height * _height); }
+    internal double BmiValue { get => Weight / (Height * Height); }
 
     /// <summary>
     /// Get current Bmi situation, for the average person.
@@ -125,7 +127,7 @@ internal partial class Client : Person, ILogin
     {
         try
         {
-            _height =
+            Height =
                 height is < 2.4 and > 1.0
                     ? height
                     : throw new InvalidClientDataException("Height is not Valid");
@@ -144,7 +146,7 @@ internal partial class Client : Person, ILogin
     {
         try
         {
-            _weight =
+            Weight =
                 weight is < 200 and > 20
                     ? weight
                     : throw new InvalidClientDataException("Weight is not Valid");
@@ -166,17 +168,14 @@ internal partial class Client : Person, ILogin
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    LoginStatus ILogin.Login()
-    {
-        throw new NotImplementedException();
-    }
+    LoginStatus ILogin.Login() { throw new NotImplementedException(); }
 
     private protected override Task InsertUser(Person user)
     {
         throw new NotImplementedException();
     }
 
-    public static void test()
+    public static async Task Example1()
     {
         var client1 = new Client();
 
@@ -186,6 +185,28 @@ internal partial class Client : Person, ILogin
             JsonSerializer.Serialize(client1, ClientJsonContext.Default.Client);
 
         Console.WriteLine(json);
+
+        client1.subscription = new Subscription();
+
+        client1.cc = new CreditCard(33, DateTime.Now, DateTime.Now, "34", "name",
+                                    CcType.Visa);
+
+        var invoice = await client1.subscription.GenerateInvoiceForCurrentMonth(
+            Payment.PaymentType.MbRef, null);
+
+        if (invoice != null)
+        {
+            Console.WriteLine(invoice.Month);
+            Console.WriteLine(invoice.Status);
+            Console.WriteLine(invoice.PaidDate);
+            Console.WriteLine(invoice.PaymentTypeUsed);
+            Console.WriteLine(invoice.ExpiryDate);
+            if (invoice.MbReference != null)
+            {
+                Console.WriteLine(invoice.MbReference.Value);
+                Console.WriteLine(invoice.MbReference.ExpiryDate);
+            }
+        }
     }
 
     #endregion

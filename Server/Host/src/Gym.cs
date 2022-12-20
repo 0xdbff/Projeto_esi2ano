@@ -37,12 +37,13 @@ internal class Gym
     /// </summary>
     internal Gym()
     {
+        MbEntity = 62013;
     }
 
     /// <summary>
     /// The gym's mb reference.
     /// </summary>
-    internal static string? MbRerefence { get; private set; }
+    public static int MbEntity { get; private set; }
 
     /// <summary>
     /// The gym's address.

@@ -1,28 +1,49 @@
 ﻿namespace Host;
 
 /// <summary>
-/// 
+///
 /// </summary>
-internal class Invoice : Payment
+internal sealed class Invoice : Payment
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    private bool _includeNif = true;
+    private bool includeNif = true;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    /// <param name="includeNif"></param>
-    public Invoice(bool includeNif)
+    public DateOnly Month { get; private set; }
+
+    internal enum InvoiceStatus
     {
-        _includeNif = includeNif;
+        /// <summary> </summary>
+        Awating,
+        /// <summary> </summary>
+        Completed,
+        /// <summary> </summary>
+        Failed,
+    }
+
+    private Invoice(PaymentType type, double amount, CreditCard? cc)
+        : base(type, amount, cc) { }
+
+    public static async Task<Invoice?> GetAsync(PaymentType type, double amount,
+                                             CreditCard? cc, DateOnly month)
+    {
+        var invoice = new Invoice(type, amount, cc);
+        invoice.Month = month;
+
+        await invoice.PaymentAsync(type, amount, cc);
+
+        if (invoice.Status == PaymentStatus.Expired)
+            return null;
+
+        return invoice;
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public Invoice()
-    {
-    }
+    private void GenerateInvoicePdf() { }
 }

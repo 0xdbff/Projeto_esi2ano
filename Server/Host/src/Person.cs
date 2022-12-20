@@ -16,25 +16,30 @@ internal enum Gender
 /// <summary>
 ///
 /// </summary>
-[JsonSerializable(typeof(Person))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class PersonJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
 internal abstract class Person : Gym
 {
+    // internal Person(string firstName, string lastName, Gender gender,
+    //                 DateTime dateOfBirth, ulong nif, Address address)
+    // {
+    //     FirstName = firstName;
+    //     LastName = lastName;
+    //     Gender = gender;
+    //     DateOfBirth = dateOfBirth;
+    //     Nif = nif;
+    //
+    //     Addresses = new List<Address>();
+    //     Addresses.Add(address);
+    // }
+
     /// <summary>
     ///     The user's first name.
     /// </summary>
-    public string? FirstName { get; private set; }
+    public string FirstName { get; private set; }
 
     /// <summary>
     ///     The user's last name.
     /// </summary>
-    public string? LastName { get; private set; }
+    public string LastName { get; private set; }
 
     /// <summary>
     ///     The user's gender.
@@ -49,9 +54,9 @@ internal abstract class Person : Gym
     /// <summary>
     /// The user's nif.
     /// </summary>
-    public uint Nif { get; private set; }
+    public ulong Nif { get; private set; }
 
-    public List<Address>? Addresses { get; private set; }
+    public List<Address> Addresses { get; private set; }
 
     /// <summary>
     /// When the user registered the account.

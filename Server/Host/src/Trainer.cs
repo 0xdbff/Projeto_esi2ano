@@ -8,7 +8,7 @@ namespace Host;
 internal class Trainer : Person, ILogin
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="firstName"></param>
     /// <param name="lastName"></param>
@@ -16,9 +16,9 @@ internal class Trainer : Person, ILogin
     /// <param name="dateOfBirth"></param>
     /// <param name="nif"></param>
     /// <param name="address"></param>
-    public Trainer(string firstName, string lastName, Gender gender, DateTime dateOfBirth, ulong nif, Address address) : base(firstName, lastName, gender, dateOfBirth, nif, address)
-    {
-    }
+    public Trainer(string firstName, string lastName, Gender gender,
+                   DateTime dateOfBirth, ulong nif, Address address, string email)
+        : base(firstName, lastName, gender, dateOfBirth, nif, address, email) { }
 
     private protected override Task InsertUser(Person user)
     {
@@ -33,12 +33,9 @@ internal class Trainer : Person, ILogin
     LoginStatus ILogin.LogIn() { throw new NotImplementedException(); }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    LoginStatus ILogin.LogOut()
-    {
-        throw new NotImplementedException();
-    }
+    LoginStatus ILogin.LogOut() { throw new NotImplementedException(); }
 }

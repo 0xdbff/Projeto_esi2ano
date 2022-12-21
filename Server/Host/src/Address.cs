@@ -1,49 +1,60 @@
 namespace Host;
 
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 using Host.Json;
 
 /// <summary>
 ///
 /// </summary>
-internal class Address
+public sealed class Address
 {
     /// <summary>
     ///
     /// </summary>
-    public int PostalCode { get; private set; }
+    public string? PostalCode { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public string? Country { get; private set; }
+    public string? Country { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public string? City { get; private set; }
+    public string? City { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public DateTime? LastUpdate { get; private set; }
+    public DateTime? LastUpdate { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public string? AditionalInfo { get; private set; }
+    public string? AdditionalInfo { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public int HouseNum { get; private set; }
+    public int HouseNum { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public string? Localidade { get; private set; }
+    public string? Localidade { get; set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public Task<bool> IsAddressValidAsync { get => ValidateAddress(); }
+
+    /// <summary>
+    ///     Await some service to verify given address;
+    /// </summary>
+    /// <returns> An awaitable Task with address validation. </returns>
+    private async Task<bool>
+    ValidateAddress() => await Task<bool>.Run(() => true);
 
     /// <summary>
     /// /
@@ -57,12 +68,21 @@ internal class Address
     }
 
     /// <summary>
-    /// 
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public static Address GenExample1() => new Address("4720-000", "Portugal",
+                                                       "Braga", DateTime.Now,
+                                                       "Rua exemplo", 20,
+                                                       "Amares");
+
+    /// <summary>
+    ///
     /// </summary>
     public Address() { }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
@@ -70,7 +90,7 @@ internal class Address
         JsonSerializer.Deserialize(json, AddressJsonContext.Default.Address);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="postalCode"></param>
     /// <param name="country"></param>
@@ -79,7 +99,7 @@ internal class Address
     /// <param name="aditionalInfo"></param>
     /// <param name="houseNum"></param>
     /// <param name="localidade"></param>
-    public Address(int postalCode, string country, string city,
+    public Address(string postalCode, string country, string city,
                    DateTime lastUpdate, string? aditionalInfo, int houseNum,
                    string localidade)
     {
@@ -87,8 +107,23 @@ internal class Address
         Country = country;
         City = city;
         LastUpdate = lastUpdate;
-        AditionalInfo = aditionalInfo;
+        AdditionalInfo = aditionalInfo;
         HouseNum = houseNum;
         Localidade = localidade;
     }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public override
+        string? ToString() => $"{Localidade}-{City}, {Country}\n" +
+                              $"{PostalCode}, {AdditionalInfo} n{HouseNum}";
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public string? ToStringLatex() =>
+        $"{Localidade}-{City}, {Country}\\\\" + "\n" +
+        $"{PostalCode}, {AdditionalInfo} n{HouseNum} \\\\";
 }

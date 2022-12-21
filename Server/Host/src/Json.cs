@@ -31,18 +31,18 @@ internal partial class TrainerJsonContext : JsonSerializerContext { }
 /// <summary>
 ///
 /// </summary>
-[JsonSerializable(typeof(Address))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class AddressJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
 [JsonSerializable(typeof(Device))]
 [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
                              WriteIndented = true)]
 internal partial class DeviceJsonContext : JsonSerializerContext { }
+
+/// <summary>
+///
+/// </summary>
+[JsonSerializable(typeof(Address))]
+[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+                             WriteIndented = true, IncludeFields = true)]
+public partial class AddressJsonContext : JsonSerializerContext { }
 
 /// <summary>
 ///

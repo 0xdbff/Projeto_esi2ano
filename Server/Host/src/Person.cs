@@ -9,15 +9,15 @@ namespace Host;
 internal enum Gender
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     Unspecified,
     /// <summary>
-    /// 
+    ///
     /// </summary>
     Female,
     /// <summary>
-    /// 
+    ///
     /// </summary>
     Male,
 }
@@ -28,7 +28,7 @@ internal enum Gender
 internal abstract class Person : Gym
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="firstName"></param>
     /// <param name="lastName"></param>
@@ -37,17 +37,20 @@ internal abstract class Person : Gym
     /// <param name="nif"></param>
     /// <param name="address"></param>
     internal Person(string firstName, string lastName, Gender gender,
-                    DateTime dateOfBirth, ulong nif, Address address)
+                    DateTime dateOfBirth, ulong nif, Address address, string email)
     {
         FirstName = firstName;
         LastName = lastName;
         Gender = gender;
         DateOfBirth = dateOfBirth;
         Nif = nif;
+        Email = email;
 
         Addresses = new List<Address>();
         Addresses.Add(address);
     }
+
+    public string Name {get => FirstName + " " + LastName;}
 
     /// <summary>
     ///     The user's first name.
@@ -75,7 +78,12 @@ internal abstract class Person : Gym
     public ulong Nif { get; private set; }
 
     /// <summary>
-    /// 
+    ///     The user's email.
+    /// </summary>
+    public string Email { get; private set; }
+
+    /// <summary>
+    ///
     /// </summary>
     public List<Address> Addresses { get; private set; }
 
@@ -86,11 +94,17 @@ internal abstract class Person : Gym
 
     #region methods
 
+    internal async Task AddAddress(Address address)
+    {
+        if (await address.IsAddressValidAsync)
+            Addresses.Add(address);
+    }
+
     #endregion
 
     #region abstract_methods
 
-    abstract private protected Task InsertUser(Person user);
+    private protected abstract Task InsertUser(Person user);
 
     #endregion
 }

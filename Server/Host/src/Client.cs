@@ -82,18 +82,26 @@ internal sealed class Client : Person, ILogin
     {
         get => BmiValue switch
         {
-            < 3.5 => throw new InvalidClientDataException(
-                "BMI not valid, too small"),
-            < 16 => Bmi.Underweight3,
-            < 17 => Bmi.Underweight2,
-            < 18.5 => Bmi.Underweight1,
-            < 25 => Bmi.Normal,
-            < 30 => Bmi.Overweight,
-            < 35 => Bmi.Obese1,
-            < 40 => Bmi.Obese2,
-            < 100 => Bmi.Obese3,
-            _ => throw new InvalidClientDataException(
-                "BMI not valid, too high")
+            <
+                3.5 =>
+                throw new InvalidClientDataException("BMI not valid, too small"),
+            <
+                16 => Bmi.Underweight3,
+            <
+                17 => Bmi.Underweight2,
+            <
+                18.5 => Bmi.Underweight1,
+            <
+                25 => Bmi.Normal,
+            <
+                30 => Bmi.Overweight,
+            <
+                35 => Bmi.Obese1,
+            <
+                40 => Bmi.Obese2,
+            <
+                100 => Bmi.Obese3,
+            _ => throw new InvalidClientDataException("BMI not valid, too high")
         };
     }
 
@@ -108,7 +116,7 @@ internal sealed class Client : Person, ILogin
     private List<CreditCard?>? cc;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="firstName"></param>
     /// <param name="lastName"></param>
@@ -116,9 +124,9 @@ internal sealed class Client : Person, ILogin
     /// <param name="dateOfBirth"></param>
     /// <param name="nif"></param>
     /// <param name="address"></param>
-    public Client(string firstName, string lastName, Gender gender, DateTime dateOfBirth, ulong nif, Address address) : base(firstName, lastName, gender, dateOfBirth, nif, address)
-    {
-    }
+    public Client(string firstName, string lastName, Gender gender,
+                  DateTime dateOfBirth, ulong nif, Address address, string email)
+        : base(firstName, lastName, gender, dateOfBirth, nif, address, email) { }
 
     #endregion
 
@@ -167,6 +175,50 @@ internal sealed class Client : Person, ILogin
         }
     }
 
+    public static async Task test()
+    {
+
+        try
+        {
+            var addr = Address.GenExample1();
+
+            var client1 = new Client("Diogo", "Antunes", Gender.Male,
+                                     new DateTime(2002, 05, 20), 000000002, addr,
+                                     "a21144@alunos@ipca.pt");
+
+            client1.Weight = 60.2;
+            client1.Height = 1.71;
+            client1.ClientType = ClientType.Common;
+
+            client1.subscription = new Subscription();
+
+            client1.subscription.Type = SubscriptionPlan.Premium;
+
+            // Console.WriteLine(client1.Addresses[0].ToString());
+            // Console.WriteLine(client1.FirstName);
+            // Console.WriteLine(client1.LastName);
+            // Console.WriteLine(client1.Gender);
+            // Console.WriteLine(client1.DateOfBirth);
+            // Console.WriteLine(client1.Weight);
+            // Console.WriteLine(client1.Height);
+            //
+            // Console.WriteLine(client1.BmiValue);
+            // Console.WriteLine(client1.CurrentBmi);
+
+            var cc = client1.cc != null ? client1.cc[0] : null;
+
+            var invoice = await Invoice.GetAsync(PaymentType.CreditCard, 8.0, cc,
+                                                 DateOnly.FromDateTime(DateTime.Now));
+
+            if (invoice != null)
+                await Invoice.GenerateInvoicePdf(client1);
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+        }
+    }
+
     /// <summary>
     ///
     /// </summary>
@@ -180,24 +232,19 @@ internal sealed class Client : Person, ILogin
     /// <exception cref="NotImplementedException"></exception>
     LoginStatus ILogin.LogIn() { throw new NotImplementedException(); }
 
-    private protected override Task InsertUser(Person user)
-    {
-        throw new NotImplementedException();
-    }
+    private protected override
+        Task InsertUser(Person user) => throw new NotImplementedException();
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    LoginStatus ILogin.LogOut()
-    {
-        throw new NotImplementedException();
-    }
+    LoginStatus ILogin.LogOut() => throw new NotImplementedException();
 
-    //public static async Task Example1()
+    // public static async Task Example1()
     //{
-    //    var client1 = new Client();
+    //     var client1 = new Client();
 
     //    client1.ClientType = ClientType.Common;
 

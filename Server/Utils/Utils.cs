@@ -1,4 +1,5 @@
 ﻿using NLog;
+using System.Text;
 
 namespace Utils;
 
@@ -44,5 +45,40 @@ public static class Security
                 hashedInputStringBuilder.Append(b.ToString("x2"));
             return hashedInputStringBuilder.ToString();
         }
+    }
+}
+
+public static class Io
+{
+    public static async Task WriteTextAsync(string filePath, string text)
+    {
+        byte[] encodedText = Encoding.UTF8.GetBytes(text);
+
+        using (FileStream sourceStream = new FileStream(
+                   filePath, FileMode.Append, FileAccess.Write, FileShare.None,
+                   bufferSize: 4096, useAsync: true))
+        {
+            await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+        };
+    }
+
+    public static async Task CopyFileAsync(string sourceFile,
+                                           string destinationFile)
+    {
+        using (
+            var sourceStream = new FileStream(
+                sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, 4096,
+                FileOptions.Asynchronous |
+                    FileOptions
+                        .SequentialScan)) using (var destinationStream =
+                                                     new FileStream(
+                                                         destinationFile,
+                                                         FileMode.CreateNew,
+                                                         FileAccess.Write,
+                                                         FileShare.None, 4096,
+                                                         FileOptions.Asynchronous |
+                                                             FileOptions
+                                                                 .SequentialScan))
+            await sourceStream.CopyToAsync(destinationStream);
     }
 }

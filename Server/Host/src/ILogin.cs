@@ -116,14 +116,6 @@ internal enum UserType
 /// <summary>
 ///
 /// </summary>
-[JsonSerializable(typeof(LoginAttempt))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class LoginAttemptJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
 internal interface ILogin
 {
     #region data

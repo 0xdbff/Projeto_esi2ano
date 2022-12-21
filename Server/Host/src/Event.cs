@@ -4,7 +4,7 @@ namespace Host;
 ///     Event class.
 ///     Every event related to a client and managed by a trainer.
 /// </summary>
-internal class Event : Trainer
+internal class Event
 {
     // static by default
     #region enum types

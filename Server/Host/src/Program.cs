@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using Host;
 
@@ -13,7 +14,7 @@ internal class Program
 
         try
         {
-            await Client.Example1();
+            //await Client.Example1();
 
             // // await DataBase.DataBase.CmdExecuteNonQueryAsync(@$"insert
             // into

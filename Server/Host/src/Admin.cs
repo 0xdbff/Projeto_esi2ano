@@ -14,7 +14,23 @@ internal class Admin : Person, ILogin
         private double income;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private static List<analyisByMonth>? analysis;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="firstName"></param>
+    /// <param name="lastName"></param>
+    /// <param name="gender"></param>
+    /// <param name="dateOfBirth"></param>
+    /// <param name="nif"></param>
+    /// <param name="address"></param>
+    public Admin(string firstName, string lastName, Gender gender, DateTime dateOfBirth, ulong nif, Address address) : base(firstName, lastName, gender, dateOfBirth, nif, address)
+    {
+    }
 
     private static async Task insertDefaultAdmin()
     {
@@ -22,14 +38,9 @@ internal class Admin : Person, ILogin
         //
     }
 
-    /// <summary>
-    ///
-    /// </summary>
-    internal Admin() { }
-
-    internal Admin(string firstName, string lastName, Gender gender,
-                   DateTime dateOfBirth)
-    { }
+    //internal Admin(string firstName, string lastName, Gender gender,
+    //               DateTime dateOfBirth)
+    //{ }
 
     private protected override Task InsertUser(Person user)
     {
@@ -41,7 +52,17 @@ internal class Admin : Person, ILogin
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    LoginStatus ILogin.Login()
+    LoginStatus ILogin.LogIn()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    LoginStatus ILogin.LogOut()
     {
         throw new NotImplementedException();
     }

@@ -8,8 +8,17 @@ namespace Host;
 /// </summary>
 internal enum Gender
 {
+    /// <summary>
+    /// 
+    /// </summary>
     Unspecified,
+    /// <summary>
+    /// 
+    /// </summary>
     Female,
+    /// <summary>
+    /// 
+    /// </summary>
     Male,
 }
 
@@ -18,18 +27,27 @@ internal enum Gender
 /// </summary>
 internal abstract class Person : Gym
 {
-    // internal Person(string firstName, string lastName, Gender gender,
-    //                 DateTime dateOfBirth, ulong nif, Address address)
-    // {
-    //     FirstName = firstName;
-    //     LastName = lastName;
-    //     Gender = gender;
-    //     DateOfBirth = dateOfBirth;
-    //     Nif = nif;
-    //
-    //     Addresses = new List<Address>();
-    //     Addresses.Add(address);
-    // }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="firstName"></param>
+    /// <param name="lastName"></param>
+    /// <param name="gender"></param>
+    /// <param name="dateOfBirth"></param>
+    /// <param name="nif"></param>
+    /// <param name="address"></param>
+    internal Person(string firstName, string lastName, Gender gender,
+                    DateTime dateOfBirth, ulong nif, Address address)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Gender = gender;
+        DateOfBirth = dateOfBirth;
+        Nif = nif;
+
+        Addresses = new List<Address>();
+        Addresses.Add(address);
+    }
 
     /// <summary>
     ///     The user's first name.
@@ -52,10 +70,13 @@ internal abstract class Person : Gym
     public DateTime DateOfBirth { get; private set; }
 
     /// <summary>
-    /// The user's nif.
+    ///     The user's nif.
     /// </summary>
     public ulong Nif { get; private set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public List<Address> Addresses { get; private set; }
 
     /// <summary>

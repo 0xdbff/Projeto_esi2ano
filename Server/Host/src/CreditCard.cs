@@ -7,7 +7,20 @@ namespace Host;
 /// <summary>
 /// 
 /// </summary>
-internal class CreditCard
+internal enum CcType
+{
+    /// <summary> </summary>
+    Invalid,
+    /// <summary> </summary>
+    Visa,
+    /// <summary> </summary>
+    MasterCard,
+}
+
+/// <summary>
+/// 
+/// </summary>
+internal sealed class CreditCard
 {
     /// <summary>
     /// 
@@ -82,6 +95,16 @@ internal class CreditCard
         $"{cc.CreditCardType})");
 
     /// <summary>
+    ///     SIMULATED CODE, to verify credit card is valid.
+    /// </summary>
+    /// <returns> Credit card type, awaitable. </returns>
+    private static async Task<CcType> SomeBankingServiceToVerifyCc() =>
+        //! TODO Some async method to verify credit card data,
+        // outside the scope of our server.
+        await Task<CcType>.Run( () => CcType.Visa);
+    
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="clientId"></param>
@@ -93,9 +116,9 @@ internal class CreditCard
                                                         CreditCard cc)
     {
         try
-        {                              // !TODO
-            const CcType validation = CcType.Visa; // Some method to verify credit card
-                                             // data, outside the scope of our server
+        {
+            CcType validation = await SomeBankingServiceToVerifyCc();
+
             if (validation == CcType.Invalid)
                 return validation;
 
@@ -117,7 +140,7 @@ internal class CreditCard
                 throw new DuplicatePkException("Duplicate credit card");
             }
         }
-        catch (DuplicatePkException e)
+        catch (DbInvalidDataException e)
         {
             Log.Error(e);
             return CcType.Invalid;

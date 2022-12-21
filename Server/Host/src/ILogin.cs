@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Net;
+﻿using System.Text.Json.Serialization;
 
 using static Data.DataBase;
 
@@ -128,11 +126,7 @@ internal partial class LoginAttemptJsonContext : JsonSerializerContext { }
 /// </summary>
 internal interface ILogin
 {
-
-
-
     #region data
-
 
     /// <summary>
     ///
@@ -140,7 +134,7 @@ internal interface ILogin
     internal Task<string?> PassHashGetAsync
     {
         get => CmdExecuteQueryAsync<string>(
-            "SELECT hashedpassword From logindata WHERE username='db4'");
+            "SELECT hashedpassword FROM logindata WHERE username='db4'");
     }
 
     #endregion
@@ -166,22 +160,22 @@ internal interface ILogin
     ///
     /// </summary>
     /// <returns></returns>
-    private protected LoginStatus Login();
+    private protected LoginStatus LogIn();
 
     /// <summary>
     ///
     /// </summary>
     /// <returns></returns>
-    internal static List<LoginAttempt>? GetCredentialsHistory()
+    private protected LoginStatus LogOut();
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    internal static List<LoginAttempt>? GetLoginHistory()
     {
         return default;
     }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <returns></returns>
-    internal static List<Data>? GetLoginHistory() { return default; }
 
     #endregion
 }

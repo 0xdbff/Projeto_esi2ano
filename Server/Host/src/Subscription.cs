@@ -3,6 +3,36 @@ namespace Host;
 /// <summary>
 ///
 /// </summary>
+internal enum SubscriptionStatus
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    Active,
+    /// <summary>
+    /// 
+    /// </summary>
+    Inactive,
+}
+
+/// <summary>
+///
+/// </summary>
+internal enum SubscriptionPlan
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    Standart,
+    /// <summary>
+    /// 
+    /// </summary>
+    Premium,
+}
+
+/// <summary>
+///
+/// </summary>
 internal class Subscription
 {
     /// <summary> </summary>
@@ -21,45 +51,24 @@ internal class Subscription
     private int nOfCancelations;
 
     /// <summary> </summary>
-    internal StatusEnum Status { get; set; }
+    internal SubscriptionStatus Status { get; set; }
 
     /// <summary> </summary>
-    internal TypeEnum Type { get; set; }
+    internal SubscriptionPlan Type { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    internal enum TypeEnum
-    {
-        Standart,
-        Premium,
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    internal enum StatusEnum
-    {
-        Active,
-        Inactive,
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    internal Subscription(Subscription.TypeEnum type)
+    internal Subscription(SubscriptionPlan type)
     {
         Type = type;
-        Status = StatusEnum.Inactive;
+        Status = SubscriptionStatus.Inactive;
     }
 
     public Subscription() { }
 
-    int year = DateTime.Now.Year;
-    int month = DateTime.Now.Month;
-
     public async Task<Invoice?>
-    GenerateInvoiceForCurrentMonth(Payment.PaymentType type, CreditCard? cc) =>
+    GenerateInvoiceForCurrentMonth(PaymentType type, CreditCard? cc) =>
         await Invoice.GetAsync(type, 2.2, cc,
                                DateOnly.FromDateTime(new DateTime(
                                    DateTime.Now.Year, DateTime.Now.Month, 1)));

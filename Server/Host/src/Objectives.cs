@@ -1,6 +1,6 @@
 namespace Host;
 
-internal class Objectives : Client
+internal class Objectives
 {
     //
 }

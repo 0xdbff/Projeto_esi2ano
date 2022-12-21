@@ -12,9 +12,9 @@ public static class DataBase
     #region bakup_path
 
     /// <summary> </summary>
-    private static string? _backupDdlPath = "~/dev/repo_g06/data/";
+    private static string? backupDdlPath = "~/dev/repo_g06/data/";
 
-    private static string? _backupDbPath = "~/dev/repo_g06/data/";
+    private static string? backupDbPath = "~/dev/repo_g06/data/";
 
     #endregion
 
@@ -52,6 +52,8 @@ public static class DataBase
 
     /// <summary> Admin Database name. /summary>
     private const string AdminDbName = "postgres";
+
+    //!TODO change auth method!
 
     /// <summary>
     ///     Password for postgresql server (needless to say, protect this src
@@ -142,7 +144,7 @@ public static class DataBase
             await using var reader = await cmd.ExecuteReaderAsync();
 
             // A List of Dictionary with key value pairs, to hold return values
-            // from an unknown query.
+            // from a query.
             var values = new List<Dictionary<int, object?>>();
 
             while (await reader.ReadAsync())
@@ -150,11 +152,8 @@ public static class DataBase
                 // A generic list to hold all the columns from the Table.
                 var fieldList = new Dictionary<int, object?>();
 
-                for (var currentField = 0; currentField < reader.FieldCount;
-                     currentField++)
-                {
+                foreach (var currentField in Enumerable.Range(0,reader.FieldCount))
                     fieldList.Add(currentField, reader.GetValue(currentField));
-                }
 
                 values.Add(fieldList);
             }
@@ -192,13 +191,11 @@ public static class DataBase
                 return await reader.GetFieldValueAsync<T?>(0);
 
             // Query with no value
-            // !TODO create custom exceptions
-            throw new Exception("No data");
+            throw new DataBaseException("No data");
         }
         catch (NpgsqlException e)
         {
             Log.Error(e);
-            // !TODO create custom exceptions
             throw new Exception("No data");
         }
     }
@@ -222,19 +219,17 @@ public static class DataBase
             await using var reader = await cmd.ExecuteReaderAsync();
 
             // A List of Dictionary with key value pairs, to hold return values
-            // from an unknown query.
+            // from a querie (every line).
             var values = new List<Dictionary<int, object?>>();
 
             while (await reader.ReadAsync())
             {
-                // A generic list to hold all the columns from the Table.
+                // A Dictionary to hold all the columns from a line with key
+                // value pairs.
                 var fieldList = new Dictionary<int, object?>();
 
-                for (var currentField = 0; currentField < reader.FieldCount;
-                     currentField++)
-                {
+                foreach (var currentField in Enumerable.Range(0, reader.FieldCount))
                     fieldList.Add(currentField, reader.GetValue(currentField));
-                }
 
                 values.Add(fieldList);
             }
@@ -272,14 +267,12 @@ public static class DataBase
                 return await reader.GetFieldValueAsync<T?>(0);
 
             // Query with no value
-            // !TODO create custom exceptions
-            throw new Exception("No data");
+            throw new DataBaseException("No data");
         }
         catch (NpgsqlException e)
         {
             Log.Error(e);
-            // !TODO create custom exceptions
-            throw new Exception("No data");
+            return default;
         }
     }
 
@@ -292,7 +285,7 @@ public static class DataBase
         try
         {
             // Data definition language (.ddl) file for IpcaGym.
-            var ddl = await File.ReadAllTextAsync($"{_backupDdlPath}IpcaGym.ddl");
+            var ddl = await File.ReadAllTextAsync($"{backupDdlPath}IpcaGym.ddl");
 
             // Execute all the commands previously defined.
             await CmdExecuteQueryAsync(ddl);
@@ -308,10 +301,11 @@ public static class DataBase
     }
 
     /// <summary>
-    /// Try creating a database on postgres server if one does not already exists,
-    /// on failure exit the program.
+    ///     Try creating a database on postgres server if one does not already
+    ///     exists, on failure exit the program.
     /// </summary>
     /// <returns> An awaitable Task. </returns>
+    /// <exception cref="Exception"></exception>
     private static async Task<int?> createDatabaseAsync()
     {
         try
@@ -325,9 +319,7 @@ public static class DataBase
             Log.Error("Cannot proceed, exiting program with exit code 1");
 
             // Exit the executable with an error code.
-            Environment.Exit(1);
-
-            return default;
+            throw new Exception("Fatal, there are no databases!");
         }
     }
 
@@ -347,7 +339,9 @@ public static class DataBase
             if (queryReturn == DbName.ToLower())
             {
                 // Ensure database tables.
-                await ensureDataBaseTables();
+                // !TODO change .ddl file -> Constrains cannot be redefined
+                // without a drop.
+                // await ensureDataBaseTables();
 
                 return;
             }
@@ -365,10 +359,11 @@ public static class DataBase
             await createDatabaseAsync();
 
             // Create Tables
-            await ensureDataBaseTables();
+            // await ensureDataBaseTables();
 
             // Try Loading database backups if there are any.
             Log.Warn($"Attempting to load DataBase backups");
+            //! TODO
         }
         catch (Exception e)
         {
@@ -377,38 +372,6 @@ public static class DataBase
 
             // Exit the executable with an error code.
             Environment.Exit(1);
-        }
-    }
-
-    public static async Task Test()
-    {
-        //
-        //     var values = await GetValues("select * from logindata")
-        //         as List<Dictionary<int, object>>;
-        //
-        //     foreach (var val in from line in values
-        //                         from collum in line
-        //                         select
-        //                  collum)
-        //     {
-        //         Console.WriteLine(val.Value);
-        //     }
-        // }
-        // catch (Exception e)
-        // {
-        //     Log.Error(e);
-        // }
-        //
-        try
-        {
-            // await Init();
-            var insert = await CmdExecuteNonQueryAsync(@$"insert into
-             logindata(username,hashedpassword) VALUES ('username23',
-            'hash')");
-        }
-        catch (Exception e)
-        {
-            Log.Error(e);
         }
     }
 

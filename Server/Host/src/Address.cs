@@ -13,34 +13,37 @@ internal class Address
     /// <summary>
     ///
     /// </summary>
-    public int PostalCode { get; set; }
-    /// <summary>
-    ///
-    /// </summary>
-    public string? Country { get; set; }
-    /// <summary>
-    ///
-    /// </summary>
-    public string? City { get; set; }
-    /// <summary>
-    ///
-    /// </summary>
-    public DateTime? LastUpdate { get; set; }
+    public int PostalCode { get; private set; }
 
     /// <summary>
     ///
     /// </summary>
-    public string? AditionalInfo { get; set; }
+    public string? Country { get; private set; }
 
     /// <summary>
     ///
     /// </summary>
-    public int HouseNum { get; set; }
+    public string? City { get; private set; }
 
     /// <summary>
     ///
     /// </summary>
-    public string? Localidade { get; set; }
+    public DateTime? LastUpdate { get; private set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public string? AditionalInfo { get; private set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public int HouseNum { get; private set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public string? Localidade { get; private set; }
 
     /// <summary>
     /// /

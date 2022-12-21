@@ -4,16 +4,6 @@ using static Data.DataBase;
 
 namespace Host;
 
-internal enum CcType
-{
-    /// <summary> </summary>
-    Invalid,
-    /// <summary> </summary>
-    Visa,
-    /// <summary> </summary>
-    MasterCard,
-}
-
 /// <summary>
 ///
 /// </summary>
@@ -36,52 +26,51 @@ internal enum PaymentStatus
 /// <summary>
 ///
 /// </summary>
+internal enum PaymentType
+{
+    /// <summary> MB reference </summary>
+    MbRef,
+    /// <summary> Credit Card </summary>
+    CreditCard,
+}
+
+/// <summary>
+///
+/// </summary>
+internal class MbRef
+{
+    /// <summary>
+    ///
+    /// </summary>
+    public DateTime ExpiryDate { get; set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public int Value { get; private set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public MbRef()
+    {
+        ExpiryDate = (DateTime.Now).AddDays(1);
+        Value = GenerateMbReference();
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    private static int GenerateMbReference() =>
+        // !TODO communicate with related services to get mb reference.
+        (new Random()).Next(0, 999999999);
+}
+
+/// <summary>
+///
+/// </summary>
 internal class Payment
 {
-
-    /// <summary>
-    ///
-    /// </summary>
-    internal enum PaymentType
-    {
-        /// <summary> MB reference </summary>
-        MbRef,
-        /// <summary> Credit Card </summary>
-        CreditCard,
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    internal class MbRef
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        public DateTime? ExpiryDate { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public int Value { get; private set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public MbRef()
-        {
-            ExpiryDate = (DateTime.Now).AddDays(1);
-            Value = GenerateMbReference();
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        private int GenerateMbReference() =>
-            // !TODO communicate with related services to get mb reference.
-            (new Random()).Next(0, 999999999);
-    }
-
     /// <summary>
     ///
     /// </summary>
@@ -117,8 +106,11 @@ internal class Payment
     #endregion
 
     /// <summary>
-    ///
+    /// 
     /// </summary>
+    /// <param name="type"></param>
+    /// <param name="amount"></param>
+    /// <param name="cc"></param>
     private protected Payment(PaymentType type, double amount, CreditCard? cc)
     {
         Amount = amount;
@@ -128,6 +120,13 @@ internal class Payment
         Status = PaymentStatus.WaitingPayment;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="amount"></param>
+    /// <param name="cc"></param>
+    /// <returns></returns>
     public async Task PaymentAsync(PaymentType type, double amount,
                                    CreditCard? cc)
     {
@@ -143,25 +142,29 @@ internal class Payment
         }
     }
 
-    // private async Task<bool> SomeBankingServiceAsync()
-    // {
-    //     var fn = () => true;
-    //     new Task(fn);
-    //     //
-    // }
+    /// <summary>
+    ///     SIMULATED CODE, to verify payment was completed.
+    /// </summary>
+    /// <returns></returns>
+    private static async Task<bool> SomeBankingServiceAsync() =>
+        // SIMULATED CODE
+        await Task<bool>.Run(() => true);
 
     /// <summary>
-    ///
+    /// 
     /// </summary>
+    /// <param name="cc"></param>
+    /// <returns></returns>
     private async Task<PaymentStatus> TryPaymentCcAsync(CreditCard cc)
     {
-        // !TODO this code needs to be changed...
+        // !TODO this code needs to be changed... This line of code is also
+        // pointless!, (Payment always evaluates to completed).
         if (ExpiryDate < DateTime.Now)
             return PaymentStatus.Expired;
 
         // !TODO Connect to bank services.
-        // And await payment with a background thread for the active period.
-        bool paid = true;
+        // And await payment with a background thread.
+        bool paid = await SomeBankingServiceAsync();
 
         if (paid)
         {
@@ -172,17 +175,20 @@ internal class Payment
     }
 
     /// <summary>
-    ///
+    /// 
     /// </summary>
+    /// <param name="mbReference"></param>
+    /// <returns></returns>
     private async Task<PaymentStatus> TryPaymentRefMbAsync(MbRef mbReference)
     {
-        // !TODO this code needs to be changed...
+        // !TODO this code needs to be changed... This line of code is also
+        // pointless!, (Payment always evaluates to completed).
         if (ExpiryDate < DateTime.Now)
             return PaymentStatus.Expired;
 
         // !TODO Connect to bank services.
-        // And await payment with a background thread for the active period.
-        bool paid = true;
+        // And await payment with a background thread.
+        bool paid = await SomeBankingServiceAsync();
 
         if (paid)
         {

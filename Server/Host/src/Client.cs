@@ -47,12 +47,12 @@ internal enum Bmi
 /// <summary>
 ///
 /// </summary>
-internal partial class Client : Person, ILogin
+internal sealed class Client : Person, ILogin
 {
     #region attributes
 
     /// <summary>
-    /// The type of the client assigned by the system.
+    ///     The type of the client assigned by the system.
     /// </summary>
     public ClientType ClientType { get; private set; }
 
@@ -61,52 +61,63 @@ internal partial class Client : Person, ILogin
     public Subscription? subscription { get; private set; }
 
     /// <summary>
-    /// </summary>
-    private CreditCard? cc;
-
-    /// <summary>
-    /// The client's height in meters.
+    ///     The client's height in meters.
     /// </summary>
     public double Height { get; private set; }
 
     /// <summary>
-    /// The client's weight in kilograms.
+    ///     The client's weight in kilograms.
     /// </summary>
     public double Weight { get; private set; }
 
     /// <summary>
-    /// The client's BMI value.
+    ///     The client's BMI value.
     /// </summary>
     internal double BmiValue { get => Weight / (Height * Height); }
 
     /// <summary>
-    /// Get current Bmi situation, for the average person.
+    ///     Get current Bmi situation, for the average person.
     /// </summary>
     internal Bmi CurrentBmi
     {
         get => BmiValue switch
         {
-            <
-                3.5 =>
-                throw new InvalidClientDataException("BMI not valid, too small"),
-            <
-                16 => Bmi.Underweight3,
-            <
-                17 => Bmi.Underweight2,
-            <
-                18.5 => Bmi.Underweight1,
-            <
-                25 => Bmi.Normal,
-            <
-                30 => Bmi.Overweight,
-            <
-                35 => Bmi.Obese1,
-            <
-                40 => Bmi.Obese2,
-            <
-                100 => Bmi.Obese3,
-            _ => throw new InvalidClientDataException("BMI not valid, too high")
+            < 3.5 => throw new InvalidClientDataException(
+                "BMI not valid, too small"),
+            < 16 => Bmi.Underweight3,
+            < 17 => Bmi.Underweight2,
+            < 18.5 => Bmi.Underweight1,
+            < 25 => Bmi.Normal,
+            < 30 => Bmi.Overweight,
+            < 35 => Bmi.Obese1,
+            < 40 => Bmi.Obese2,
+            < 100 => Bmi.Obese3,
+            _ => throw new InvalidClientDataException(
+                "BMI not valid, too high")
         };
+    }
+
+    /// <summary>
+    ///     The client's invoices.
+    /// </summary>
+    private List<Invoice?>? invoices;
+
+    /// <summary>
+    ///     The client's credit cards.
+    /// </summary>
+    private List<CreditCard?>? cc;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="firstName"></param>
+    /// <param name="lastName"></param>
+    /// <param name="gender"></param>
+    /// <param name="dateOfBirth"></param>
+    /// <param name="nif"></param>
+    /// <param name="address"></param>
+    public Client(string firstName, string lastName, Gender gender, DateTime dateOfBirth, ulong nif, Address address) : base(firstName, lastName, gender, dateOfBirth, nif, address)
+    {
     }
 
     #endregion
@@ -115,7 +126,6 @@ internal partial class Client : Person, ILogin
     /// Register a new client.
     /// Client's class constructor.
     /// </summary>
-    public Client() { }
 
     #region methods
 
@@ -168,46 +178,36 @@ internal partial class Client : Person, ILogin
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    LoginStatus ILogin.Login() { throw new NotImplementedException(); }
+    LoginStatus ILogin.LogIn() { throw new NotImplementedException(); }
 
     private protected override Task InsertUser(Person user)
     {
         throw new NotImplementedException();
     }
 
-    public static async Task Example1()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    LoginStatus ILogin.LogOut()
     {
-        var client1 = new Client();
-
-        client1.ClientType = ClientType.Common;
-
-        var json =
-            JsonSerializer.Serialize(client1, ClientJsonContext.Default.Client);
-
-        Console.WriteLine(json);
-
-        client1.subscription = new Subscription();
-
-        client1.cc = new CreditCard(33, DateTime.Now, DateTime.Now, "34", "name",
-                                    CcType.Visa);
-
-        var invoice = await client1.subscription.GenerateInvoiceForCurrentMonth(
-            Payment.PaymentType.MbRef, null);
-
-        if (invoice != null)
-        {
-            Console.WriteLine(invoice.Month);
-            Console.WriteLine(invoice.Status);
-            Console.WriteLine(invoice.PaidDate);
-            Console.WriteLine(invoice.PaymentTypeUsed);
-            Console.WriteLine(invoice.ExpiryDate);
-            if (invoice.MbReference != null)
-            {
-                Console.WriteLine(invoice.MbReference.Value);
-                Console.WriteLine(invoice.MbReference.ExpiryDate);
-            }
-        }
+        throw new NotImplementedException();
     }
+
+    //public static async Task Example1()
+    //{
+    //    var client1 = new Client();
+
+    //    client1.ClientType = ClientType.Common;
+
+    //    var json =
+    //        JsonSerializer.Serialize(client1, ClientJsonContext.Default.Client);
+
+    //    Console.WriteLine(json);
+
+    //    client1.subscription = new Subscription();
+    //}
 
     #endregion
 }

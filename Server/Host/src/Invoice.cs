@@ -15,19 +15,23 @@ internal sealed class Invoice : Payment
     /// </summary>
     public DateOnly Month { get; private set; }
 
-    internal enum InvoiceStatus
-    {
-        /// <summary> </summary>
-        Awating,
-        /// <summary> </summary>
-        Completed,
-        /// <summary> </summary>
-        Failed,
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="amount"></param>
+    /// <param name="cc"></param>
     private Invoice(PaymentType type, double amount, CreditCard? cc)
         : base(type, amount, cc) { }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="amount"></param>
+    /// <param name="cc"></param>
+    /// <param name="month"></param>
+    /// <returns></returns>
     public static async Task<Invoice?> GetAsync(PaymentType type, double amount,
                                              CreditCard? cc, DateOnly month)
     {

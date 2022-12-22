@@ -2,7 +2,7 @@
 
 using static Data.DataBase;
 
-namespace Host;
+namespace Host.Login;
 
 /// <summary>
 ///
@@ -17,101 +17,101 @@ internal enum UserType
     Client
 }
 
+/// <summary>
+///
+/// </summary>
+public enum LoginStatus
+{
+    /// <summary> </summary>
+    LoggedIn,
+    /// <summary> </summary>
+    LoggedOut,
+    /// <summary> </summary>
+    DeviceLimitViolated,
+    /// <summary> </summary>
+    InvalidCredentials,
+    /// <summary> </summary>
+    UnauthoryzedLocation,
+    /// <summary> </summary>
+    WaitingForAuthCode,
+    /// <summary> </summary>
+    AuthCodeExpired,
+}
+
+/// <summary>
+///
+/// </summary>
+internal class LoginAttempt
+{
     /// <summary>
     ///
     /// </summary>
-    public enum LoginStatus
-    {
-        /// <summary> </summary>
-        LoggedIn,
-        /// <summary> </summary>
-        LoggedOut,
-        /// <summary> </summary>
-        DeviceLimitViolated,
-        /// <summary> </summary>
-        InvalidCredentials,
-        /// <summary> </summary>
-        UnauthoryzedLocation,
-        /// <summary> </summary>
-        WaitingForAuthCode,
-        /// <summary> </summary>
-        AuthCodeExpired,
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    internal class LoginAttempt
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        public AuthType AuthType { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public string? Authentication { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public string? HashedPassword { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public string? AuthCode { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public DateTime date { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public LoginStatus loginStatus { get; set; }
-    }
+    public AuthType AuthType { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public enum AuthType
-    {
-        /// <summary> </summary>
-        Email,
-        /// <summary> </summary>
-        Phone,
-        /// <summary> </summary>
-        UserName,
-    }
+    public string? Authentication { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    internal class Data
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        public string? Username { get; private set; }
+    public string? HashedPassword { get; set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        public string? HashedPassword { get; private set; }
+    /// <summary>
+    ///
+    /// </summary>
+    public string? AuthCode { get; set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        public bool TwoFactorAuth { get; private set; }
+    /// <summary>
+    ///
+    /// </summary>
+    public DateTime date { get; set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        public DateTime LastLogin { get; private set; }
-    }
+    /// <summary>
+    ///
+    /// </summary>
+    public LoginStatus loginStatus { get; set; }
+}
+
+/// <summary>
+///
+/// </summary>
+public enum AuthType
+{
+    /// <summary> </summary>
+    Email,
+    /// <summary> </summary>
+    Phone,
+    /// <summary> </summary>
+    UserName,
+}
+
+/// <summary>
+///
+/// </summary>
+internal class Data
+{
+    /// <summary>
+    ///
+    /// </summary>
+    public string? Username { get; private set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public string? HashedPassword { get; private set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public bool TwoFactorAuth { get; private set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public DateTime LastLogin { get; private set; }
+}
 
 /// <summary>
 ///
@@ -164,10 +164,7 @@ internal interface ILogin
     ///
     /// </summary>
     /// <returns></returns>
-    internal static List<LoginAttempt>? GetLoginHistory()
-    {
-        return default;
-    }
+    internal static List<LoginAttempt>? GetLoginHistory() { return default; }
 
     #endregion
 }

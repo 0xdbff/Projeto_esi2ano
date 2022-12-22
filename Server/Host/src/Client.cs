@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using Host.Json;
+using Host.Login;
 
 namespace Host;
 

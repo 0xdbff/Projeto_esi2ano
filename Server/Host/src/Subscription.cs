@@ -65,8 +65,17 @@ internal class Subscription
         Status = SubscriptionStatus.Inactive;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public Subscription() { }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="cc"></param>
+    /// <returns></returns>
     public async Task<Invoice?>
     GenerateInvoiceForCurrentMonth(PaymentType type, CreditCard? cc) =>
         await Invoice.GetAsync(type, 2.2, cc,

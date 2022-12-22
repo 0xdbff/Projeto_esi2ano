@@ -4,6 +4,8 @@ using static Data.DataBase;
 
 namespace Host.Json;
 
+// !TODO
+
 /// <summary>
 ///
 /// </summary>
@@ -42,7 +44,7 @@ internal partial class DeviceJsonContext : JsonSerializerContext { }
 [JsonSerializable(typeof(Address))]
 [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
                              WriteIndented = true, IncludeFields = true)]
-public partial class AddressJsonContext : JsonSerializerContext { }
+internal partial class AddressJsonContext : JsonSerializerContext { }
 
 /// <summary>
 ///

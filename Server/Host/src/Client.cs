@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 
 using Host.Json;
 using Host.Login;
+using Host.Event;
 
 namespace Host;
 
@@ -184,7 +185,7 @@ internal sealed class Client : Person, ILogin
             var addr = Address.GenExample1();
 
             var client1 = new Client("Diogo", "Antunes", Gender.Male,
-                                     new DateTime(2002, 05, 20), 000000002, addr,
+                                     new DateTime(2002, 05, 20), 100000002, addr,
                                      "a21144@alunos@ipca.pt");
 
             client1.Weight = 60.2;
@@ -194,17 +195,6 @@ internal sealed class Client : Person, ILogin
             client1.subscription = new Subscription();
 
             client1.subscription.Type = SubscriptionPlan.Premium;
-
-            // Console.WriteLine(client1.Addresses[0].ToString());
-            // Console.WriteLine(client1.FirstName);
-            // Console.WriteLine(client1.LastName);
-            // Console.WriteLine(client1.Gender);
-            // Console.WriteLine(client1.DateOfBirth);
-            // Console.WriteLine(client1.Weight);
-            // Console.WriteLine(client1.Height);
-            //
-            // Console.WriteLine(client1.BmiValue);
-            // Console.WriteLine(client1.CurrentBmi);
 
             var cc = client1.cc != null ? client1.cc[0] : null;
 
@@ -219,6 +209,11 @@ internal sealed class Client : Person, ILogin
             Log.Error(e);
         }
     }
+
+    internal Session GymEntrance() =>
+        subscription != null && subscription.Status != SubscriptionStatus.Inactive
+            ? Session.RegisteredEntry
+            : Session.UnAuthorized;
 
     /// <summary>
     ///

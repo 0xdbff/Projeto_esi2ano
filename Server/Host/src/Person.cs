@@ -1,6 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
 using static Data.DataBase;
 
 namespace Host;
@@ -38,7 +35,8 @@ internal abstract class Person : Gym
     /// <param name="nif"></param>
     /// <param name="address"></param>
     internal Person(string firstName, string lastName, Gender gender,
-                    DateTime dateOfBirth, ulong nif, Address address, string email)
+                    DateTime dateOfBirth, ulong nif, Address address,
+                    string email)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -51,7 +49,7 @@ internal abstract class Person : Gym
         Addresses.Add(address);
     }
 
-    public string Name {get => FirstName + " " + LastName;}
+    public string Name { get => FirstName + " " + LastName; }
 
     /// <summary>
     ///     The user's first name.

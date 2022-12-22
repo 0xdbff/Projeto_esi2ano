@@ -53,7 +53,7 @@ public static class DataBase
     /// <summary> Admin Database name. /summary>
     private const string AdminDbName = "postgres";
 
-    //!TODO change auth method!
+    //! TODO change auth method!
 
     /// <summary>
     ///     Password for postgresql server (needless to say, protect this src
@@ -149,13 +149,13 @@ public static class DataBase
 
             while (await reader.ReadAsync())
             {
-                // A generic list to hold all the columns from the Table.
-                var fieldList = new Dictionary<int, object?>();
+                // A generic Dictionary to hold all the columns from the Table.
+                var columns = new Dictionary<int, object?>();
 
-                foreach (var currentField in Enumerable.Range(0,reader.FieldCount))
-                    fieldList.Add(currentField, reader.GetValue(currentField));
+                foreach (var currentField in Enumerable.Range(0, reader.FieldCount))
+                    columns.Add(currentField, reader.GetValue(currentField));
 
-                values.Add(fieldList);
+                values.Add(columns);
             }
 
             return values;
@@ -168,7 +168,43 @@ public static class DataBase
     }
 
     /// <summary>
-    /// 
+    ///
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    public static async Task<Dictionary<int, object?>?>
+    CmdExecuteQuerySingleAsync(string? @sql)
+    {
+        try
+        {
+            // Open a connection that will live through the execution of this method's
+            // stack frame.
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnString);
+            await using var dataSource = dataSourceBuilder.Build();
+
+            await using var cmd = dataSource.CreateCommand(sql);
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            // A generic Dictionary to hold all the columns from the Table.
+            var fieldList = new Dictionary<int, object?>();
+
+            while (await reader.ReadAsync())
+            {
+                foreach (var currentField in Enumerable.Range(0, reader.FieldCount))
+                    fieldList.Add(currentField, reader.GetValue(currentField));
+            }
+
+            return fieldList;
+        }
+        catch (NpgsqlException e)
+        {
+            Log.Error(e);
+            return default;
+        }
+    }
+
+    /// <summary>
+    ///
     /// </summary>
     /// <param name="sql"></param>
     /// <typeparam name="T"></typeparam>
@@ -224,14 +260,13 @@ public static class DataBase
 
             while (await reader.ReadAsync())
             {
-                // A Dictionary to hold all the columns from a line with key
-                // value pairs.
-                var fieldList = new Dictionary<int, object?>();
+                // A generic Dictionary to hold all the columns from the Table.
+                var columns = new Dictionary<int, object?>();
 
                 foreach (var currentField in Enumerable.Range(0, reader.FieldCount))
-                    fieldList.Add(currentField, reader.GetValue(currentField));
+                    columns.Add(currentField, reader.GetValue(currentField));
 
-                values.Add(fieldList);
+                values.Add(columns);
             }
 
             return values;
@@ -244,7 +279,7 @@ public static class DataBase
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="sql"></param>
     /// <typeparam name="T"></typeparam>
@@ -287,6 +322,7 @@ public static class DataBase
             // Data definition language (.ddl) file for IpcaGym.
             var ddl = await File.ReadAllTextAsync($"{backupDdlPath}IpcaGym.ddl");
 
+            // !TODO duplicate constrains produce an error.
             // Execute all the commands previously defined.
             await CmdExecuteQueryAsync(ddl);
         }
@@ -359,7 +395,7 @@ public static class DataBase
             await createDatabaseAsync();
 
             // Create Tables
-            // await ensureDataBaseTables();
+            await ensureDataBaseTables();
 
             // Try Loading database backups if there are any.
             Log.Warn($"Attempting to load DataBase backups");

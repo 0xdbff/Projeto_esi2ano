@@ -1,18 +1,30 @@
-﻿using System.Net;
-using System.Reflection.PortableExecutable;
-using System.Text.Json;
-using Host;
+﻿using Host.Login;
 
 using static Utils.Logger;
-using static Utils.Security;
 
-internal class Program
+LoggerInit();
+
+var test = new Dictionary<int, object>();
+
+
+
+var l = await LoginData.GetAll();
+// var val = await LoginData.GetWithUsername("db8");
+if (l != null)
 {
-    private static async Task Main(string[] args)
+    foreach (var val in l)
     {
-        LoggerInit();
-
-        await Client.test();
-        // await Invoice.GenerateInvoicePdf();
+        Console.WriteLine(val.Username);
+        Console.WriteLine(val.HashedPassword);
+        Console.WriteLine(val.TwoFactorAuth);
+        Console.WriteLine(val.LastLogin);
     }
 }
+
+// await Client.test();
+
+// var ipcaGym = new Gym();
+
+// ipcaGym.Test();
+
+// await Invoice.GenerateInvoicePdf();

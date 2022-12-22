@@ -1,11 +1,8 @@
 ﻿using System.Diagnostics;
-using System.Text;
 
 using static Utils.Logger;
 using static Utils.File;
 using static Utils.Security;
-using System;
-using System.Text.RegularExpressions;
 
 namespace Host;
 
@@ -62,7 +59,25 @@ internal sealed class Invoice : Payment
     ///     A path to invoice's latex source code on the host server to generate
     ///     automated invoices on payment.
     /// </summary>
-    private static string invoiceSrcPath = "~/dev/repo_g06/Invoice";
+    private static string invoiceSrcPath = "/home/db/dev/repo_g06/Invoice";
+
+    private static void CleanUp()
+    {
+        try
+        {
+            using var cleanScript = new Process();
+
+            // Unix style.
+            cleanScript.StartInfo.FileName = $"{invoiceSrcPath}/src/cleanScript.sh";
+            cleanScript.StartInfo.CreateNoWindow = true;
+            cleanScript.StartInfo.RedirectStandardOutput = true;
+            cleanScript.Start();
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+        }
+    }
 
     /// <summary>
     ///
@@ -81,7 +96,12 @@ internal sealed class Invoice : Payment
             pdfGen.StartInfo.Arguments =
                 $"-output-directory={invoiceSrcPath}/December_2022 {texSrc}";
             pdfGen.StartInfo.CreateNoWindow = true;
+            pdfGen.StartInfo.RedirectStandardOutput = true;
             pdfGen.Start();
+
+            await pdfGen.WaitForExitAsync();
+
+            CleanUp();
         }
         catch (Exception e)
         {
@@ -90,7 +110,7 @@ internal sealed class Invoice : Payment
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="client"></param>
     /// <returns></returns>
@@ -100,7 +120,7 @@ internal sealed class Invoice : Payment
         if (client.subscription == null)
             throw new Exception("Invalid client");
 
-        var address = $@"{client.Nif}\\{client.Addresses[0].ToStringLatex()}";
+        var address = $@"NIF-{client.Nif}\\{client.Addresses[0].ToStringLatex()}";
         var name = client.Name;
         var email = "{" + client.Email + "}" + "{" + client.Email + "}";
         var month = DateTime.Now.ToString("Y");
@@ -117,25 +137,25 @@ internal sealed class Invoice : Payment
         {
             taxRate = (0).ToString();
 
-            //price = (client.subscription.Type == SubscriptionPlan.Standart)?
-            //    (8.22).ToString() : (16.86).ToString();
+            price = (client.subscription.Type == SubscriptionPlan.Standart)
+                        ? (8.22).ToString()
+                        : (16.86).ToString();
         }
         else if (client.ClientType == ClientType.Common)
         {
             taxRate = (23).ToString();
 
-            //price = (client.subscription.Type == SubscriptionPlan.Standart) ?
-            //    (8.22*1.8).ToString() : (16.86*1.8).ToString();
+            price = (client.subscription.Type == SubscriptionPlan.Standart)
+                        ? (8.22 * 1.8).ToString()
+                        : (16.86 * 1.8).ToString();
         }
         else
             throw new Exception("Invalid client");
 
-        price = "44.2";
-
         product =
             $"Subscription IpcaGym {client.subscription.Type} ({client.ClientType}), {month}";
 
-        //!TODO optimize.
+        //! TODO optimize.
         string invoiceSrc;
         invoiceSrc = texSrc.Replace("TAXRATE", taxRate);
         invoiceSrc = invoiceSrc.Replace("INVOICENUMBER", invoiceNumber);
@@ -148,17 +168,17 @@ internal sealed class Invoice : Payment
 
         month = month.Replace(' ', '_');
 
-        Console.WriteLine(product +" "+ price);
+        Console.WriteLine(product + " " + price);
 
-        string dir =
-            $"{invoiceSrcPath}/{month}";
+        string dir = $"{invoiceSrcPath}/{month}";
 
         Directory.CreateDirectory(dir);
         dir += $"/{SHA512(DateTime.Now.ToString() + client.Nif)}.tex";
 
         Console.WriteLine(dir);
 
-        //await CopyFileAsync(invoiceSrcPath + "/invoice.cls", dir + "/invoice.cls");
+        // await CopyFileAsync(invoiceSrcPath + "/invoice.cls", dir +
+        // "/invoice.cls");
         await WriteTextAsync(dir, invoiceSrc);
 
         return dir;
@@ -171,12 +191,12 @@ internal sealed class Invoice : Payment
     ///     Better cpu performance, worse on binary size.
     /// </summary>
     private static readonly string texSrc =
-            @"% Attribution and Licence Notice [http://www.latextemplates.com/template/minimal-invoice]
+        @"% Attribution and Licence Notice [http://www.latextemplates.com/template/minimal-invoice]
 % [https://creativecommons.org/licenses/by-nc-sa/4.0/]
 \documentclass[
         a4paper,
         9pt,
-]{/Users/db/dev/repo_g06/Invoice/src/invoice}
+]{/home/db/dev/repo_g06/Invoice/src/invoice}
 \taxrate{TAXRATE}
 \currencycode{EUR}
 \invoicenumber{INVOICENUMBER}

@@ -5,7 +5,7 @@ using System;
 namespace Utils;
 
 /// <summary>
-/// 
+///     Logger Class
 /// </summary>
 public static class Logger
 {
@@ -17,13 +17,13 @@ public static class Logger
     #region logger
 
     /// <summary>
-    /// 
+    ///     Logger method
     /// </summary>
     public static readonly NLog.Logger Log =
         NLog.LogManager.GetCurrentClassLogger();
 
     /// <summary>
-    /// 
+    ///     Init Logger
     /// </summary>
     public static void LoggerInit()
     {
@@ -40,12 +40,12 @@ public static class Logger
 }
 
 /// <summary>
-/// 
+///     Security Class
 /// </summary>
 public static class Security
 {
     /// <summary>
-    /// 
+    ///     512 bits hash from a string input to string in hex (utf8 encoded)
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
@@ -65,10 +65,10 @@ public static class Security
     }
 
     /// <summary>
-    /// 
+    ///     256 bits hash from a string input to string in hex (utf8 encoded)
     /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
+    /// <param name="input"> input</param>
+    /// <returns>an hash</returns>
     public static string SHA256(string input)
     {
         var bytes = System.Text.Encoding.UTF8.GetBytes(input);
@@ -85,10 +85,10 @@ public static class Security
     }
 
     /// <summary>
-    /// 
+    ///     128 bits hash from a string input to string in hex (utf8 encoded)
     /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
+    /// <param name="input">input</param>
+    /// <returns> an hash </returns>
     public static string SHA128(string input)
     {
         var bytes = System.Text.Encoding.UTF8.GetBytes(input);
@@ -106,21 +106,21 @@ public static class Security
 }
 
 /// <summary>
-/// 
+///     File Class
 /// </summary>
 public static class File
 {
     /// <summary>
-    /// 
+    ///     write text to a file asynchronously.
     /// </summary>
     /// <param name="filePath"></param>
     /// <param name="text"></param>
-    /// <returns></returns>
+    /// <returns>an awaitable task</returns>
     public static async Task WriteTextAsync(string filePath, string text)
     {
         byte[] encodedText = Encoding.UTF8.GetBytes(text);
 
-        using var sourceStream = new FileStream(
+        await using var sourceStream = new FileStream(
                    filePath, FileMode.Append, FileAccess.Write, FileShare.None,
                    bufferSize: 4096, useAsync: true);
         
@@ -129,11 +129,11 @@ public static class File
     }
 
     /// <summary>
-    /// 
+    ///     Copy files asynchronously.
     /// </summary>
-    /// <param name="sourceFile"></param>
-    /// <param name="destinationFile"></param>
-    /// <returns></returns>
+    /// <param name="sourceFile"> source path</param>
+    /// <param name="destinationFile"> destination path</param>
+    /// <returns> An awaitable Task </returns>
     public static async Task CopyFileAsync(string sourceFile,
                                            string destinationFile)
     {

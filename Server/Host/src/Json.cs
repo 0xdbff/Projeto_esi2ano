@@ -7,37 +7,37 @@ namespace Host.Json;
 
 // !TODO
 
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Client))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class ClientJsonContext : JsonSerializerContext { }
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Client))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class ClientJsonContext : JsonSerializerContext { }
+//
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Admin))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class AdminJsonContext : JsonSerializerContext { }
+//
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Trainer))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class TrainerJsonContext : JsonSerializerContext { }
 
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Admin))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class AdminJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Trainer))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class TrainerJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Device))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class DeviceJsonContext : JsonSerializerContext { }
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Device))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class DeviceJsonContext : JsonSerializerContext { }
 
 /// <summary>
 ///
@@ -47,42 +47,42 @@ internal partial class DeviceJsonContext : JsonSerializerContext { }
                              WriteIndented = true, IncludeFields = true)]
 internal partial class AddressJsonContext : JsonSerializerContext { }
 
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Payment))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class PaymentJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Subscription))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class SubscriptionJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Statistics))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class StatisticsJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(CreditCard))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class CreditCardJsonContext : JsonSerializerContext { }
-
-/// <summary>
-///
-/// </summary>
-[JsonSerializable(typeof(Invoice))]
-[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
-                             WriteIndented = true)]
-internal partial class InvoiceJsonContext : JsonSerializerContext { }
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Payment))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class PaymentJsonContext : JsonSerializerContext { }
+//
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Subscription))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class SubscriptionJsonContext : JsonSerializerContext { }
+//
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Statistics))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class StatisticsJsonContext : JsonSerializerContext { }
+//
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(CreditCard))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class CreditCardJsonContext : JsonSerializerContext { }
+//
+// /// <summary>
+// ///
+// /// </summary>
+// [JsonSerializable(typeof(Invoice))]
+// [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Default,
+//                              WriteIndented = true)]
+// internal partial class InvoiceJsonContext : JsonSerializerContext { }

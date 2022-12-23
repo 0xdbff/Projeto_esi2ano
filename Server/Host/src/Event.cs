@@ -49,19 +49,21 @@ internal enum ReservationStatus
 
 /// <summary>
 ///     A client can make reservations.
-///     This enumerator defines all the types the event could be.
 /// </summary>
 internal struct Reservation
 {
     /// <summary>
+    ///     Start event Date
     /// </summary>
     internal DateTime StartDate { get; set; }
 
     /// <summary>
+    ///     End event Data
     /// </summary>
     internal DateTime EndDate { get; set; }
 
     /// <summary>
+    ///     Comments
     /// </summary>
     internal string? Comments { get; set; }
 }

@@ -7,30 +7,31 @@ using Data;
 namespace Host;
 
 /// <summary>
+///     Gender type
 /// </summary>
 internal enum Gender
 {
     /// <summary>
-    ///
+    ///     Unspecified
     /// </summary>
     Unspecified,
     /// <summary>
-    ///
+    ///     Female
     /// </summary>
     Female,
     /// <summary>
-    ///
+    ///     Male
     /// </summary>
     Male,
 }
 
 /// <summary>
-///
+///     Person Class
 /// </summary>
 internal abstract class Person : Gym
 {
     /// <summary>
-    ///
+    ///     Person constructor
     /// </summary>
     /// <param name="firstName"></param>
     /// <param name="lastName"></param>
@@ -50,13 +51,11 @@ internal abstract class Person : Gym
         Email = email;
 
         LoginData = loginData;
-
-        Addresses = new List<Address>();
-        Addresses.Add(address);
+        Address = address;
     }
 
     /// <summary>
-    ///     The user's first name.
+    ///     The user's login data.
     /// </summary>
     public LoginData LoginData { get; private set; }
 
@@ -66,7 +65,7 @@ internal abstract class Person : Gym
     public string Name { get => FirstName + " " + LastName; }
 
     /// <summary>
-    ///     The user's first name.
+    ///     The user's First name.
     /// </summary>
     public string FirstName { get; private set; }
 
@@ -91,7 +90,7 @@ internal abstract class Person : Gym
     public int Nif { get; private set; }
 
     /// <summary>
-    ///     The user's nif.
+    ///     The user's phone.
     /// </summary>
     public int Phone { get; private set; } = 900000000;
 
@@ -101,27 +100,25 @@ internal abstract class Person : Gym
     public string Email { get; private set; }
 
     /// <summary>
-    ///
+    ///     The User's address.
     /// </summary>
-    public List<Address> Addresses { get; private set; }
+    public Address Address { get; set; }
 
     /// <summary>
-    /// When the user registered the account.
+    ///     When the user registered the account.
     /// </summary>
     private protected DateTime? RegisteredDate { get; set; }
 
     #region methods
 
-    internal async Task AddAddress(Address address)
-    {
-        if (await address.IsAddressValidAsync)
-            Addresses.Add(address);
-    }
-
     #endregion
 
     #region abstract_methods
 
+    /// <summary>
+    ///     Insert to database asynchronously.
+    /// </summary>
+    /// <param name="username">username</param>
     private protected async Task InsertUserDataToDbAsync(string username)
     {
         try
@@ -137,11 +134,6 @@ internal abstract class Person : Gym
         {
             Log.Error(e);
         }
-    }
-
-    private protected async Task GetUserDataAsync()
-    {
-        //
     }
 
     #endregion

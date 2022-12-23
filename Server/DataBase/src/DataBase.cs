@@ -8,12 +8,18 @@ namespace Data;
 /// </summary>
 public static class DataBase
 {
-    /// Absolute paths, This Files will be stored on the DBMS(postgres) server.
     #region bakup_path
-
-    /// <summary> </summary>
+    
+    /// <summary>
+    ///     Path for data definition files.
+    ///     Absolute paths, This Files will be stored on the DBMS(postgres) server.
+    /// </summary>
     private static string? backupDdlPath = "/home/db/dev/repo_g06/Data/dataDefinition/";
 
+    /// <summary>
+    ///     Path for database backup files.
+    ///     Absolute paths, This Files will be stored on the DBMS(postgres) server.
+    /// </summary>
     private static string? backupDbPath = "/home/db/dev/repo_g06/Data/backup/";
 
     #endregion
@@ -50,7 +56,7 @@ public static class DataBase
     /// <summary> Database name. </summary>
     private const string DbName = "ipcagym";
 
-    /// <summary> Admin Database name. /summary>
+    /// <summary> Admin Database name. </summary>
     private const string AdminDbName = "postgres";
 
     //! TODO change auth method!
@@ -71,15 +77,13 @@ public static class DataBase
     #region methods
 
     /// <summary>
-    ///     Initialize a database connection.
-    ///     Connections must be disposed when they are no longer needed - not
-    ///     doing so can result in a connection leak, which can crash your
-    ///     program, this is done via the await using C# construct, which ensures
-    ///     that the connection is disposed even if an exception is later thrown.
+    ///     Initialize a database connection as a postgres user, and
+    ///     Execute a command that returns no queries, only the number of
+    ///     rows altered.
+    ///     Connections are disposed when they are no longer needed.
     /// </summary>
-    /// <returns>
-    ///     Number of rows affected.
-    /// </returns>
+    /// <param name="sql">sql commands. </param>
+    /// <returns> The number of rows altered. </returns>
     public static async Task<int> CmdExecuteNonQueryAsync(string? @sql)
     {
         try
@@ -101,10 +105,13 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Initialize a database connection as an admin user, and
+    ///     Execute a command that returns no queries, only the number of
+    ///     rows altered.
+    ///     Connections are disposed when they are no longer needed.
     /// </summary>
-    /// <param name="sql"></param>
-    /// <returns></returns>
+    /// <param name="sql"> sql commands .</param>
+    /// <returns> The number of rows altered. </returns>
     private static async Task<int> AdminCmdExecuteNonQueryAsync(string? @sql)
     {
         try
@@ -126,10 +133,13 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Initialize a database connection as a postgres user, and
+    ///     Execute a command that returns data. Every line is a value in a list,
+    ///     while every column is a Dictionary with key value pairs.
+    ///     Connections are disposed when they are no longer needed.
     /// </summary>
-    /// <param name="sql"></param>
-    /// <returns></returns>
+    /// <param name="sql">sql commands.</param>
+    /// <returns> Data from the query. </returns>
     public static async Task<List<Dictionary<int, object?>>?>
     CmdExecuteQueryAsync(string? @sql)
     {
@@ -168,10 +178,14 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Initialize a database connection as a postgres user, and
+    ///     Execute a command that returns data. This method assumes there
+    ///     will be only one line of the query.
+    ///     Every column is a Dictionary with key value pairs.
+    ///     Connections are disposed when they are no longer needed.
     /// </summary>
-    /// <param name="sql"></param>
-    /// <returns></returns>
+    /// <param name="sql">sql commands.</param>
+    /// <returns> Data from the query. </returns>
     public static async Task<Dictionary<int, object?>?>
     CmdExecuteQuerySingleAsync(string? @sql)
     {
@@ -204,12 +218,16 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Initialize a database connection as a postgres user, and
+    ///     Execute a command that returns an object. This method assumes
+    ///     there will be only with value (object) returned and tries to read
+    ///     it as a Type of System.IConvertible.
+    ///     Connections are disposed when they are no longer needed.
     /// </summary>
-    /// <param name="sql"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    /// <param name="sql"> sql commands.</param>
+    /// <typeparam name="T"> Type of return value </typeparam>
+    /// <returns>Query result as an object of type T</returns>
+    /// <exception cref="Exception"> No data returned </exception>
     public static async Task<T?> CmdExecuteQueryAsync<T>(string? @sql)
         where T : System.IConvertible
     {
@@ -237,10 +255,13 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Initialize a database connection as an admin user, and
+    ///     Execute a command that returns data. Every line is a value in a list,
+    ///     while every column is a Dictionary with key value pairs.
+    ///     Connections are disposed when they are no longer needed.
     /// </summary>
-    /// <param name="sql"></param>
-    /// <returns></returns>
+    /// <param name="sql">sql commands.</param>
+    /// <returns> Data from the query. </returns>
     private static async Task<List<Dictionary<int, object?>>?>
     AdminCmdExecuteQueryAsync(string? @sql)
     {
@@ -279,12 +300,16 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Initialize a database connection as a postgres user, and
+    ///     Execute a command that returns an object. This method assumes
+    ///     there will be only with value (object) returned and tries to read
+    ///     it as a Type of System.IConvertible.
+    ///     Connections are disposed when they are no longer needed.
     /// </summary>
-    /// <param name="sql"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    /// <param name="sql"> sql commands.</param>
+    /// <typeparam name="T"> Type of return value </typeparam>
+    /// <returns>Query result as an object of type T</returns>
+    /// <exception cref="Exception"> No data returned </exception>
     private static async Task<T?> AdminCmdExecuteQueryAsync<T>(string? @sql)
         where T : System.IConvertible
     {
@@ -312,10 +337,12 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Ensure database tables are defined in the way the program expects them
+    ///     to be. A data definition file will be loaded with sql statements to
+    ///     run when the executable is initialized.
     /// </summary>
-    /// <returns></returns>
-    private static async Task ensureDataBaseTables()
+    /// <returns> An awaitable Task </returns>
+    private static async Task EnsureDataBaseTables()
     {
         try
         {
@@ -341,8 +368,8 @@ public static class DataBase
     ///     exists, on failure exit the program.
     /// </summary>
     /// <returns> An awaitable Task. </returns>
-    /// <exception cref="Exception"></exception>
-    private static async Task<int?> createDatabaseAsync()
+    /// <exception cref="Exception"> exit the program </exception>
+    private static async Task<int?> CreateDatabaseAsync()
     {
         try
         {
@@ -360,9 +387,12 @@ public static class DataBase
     }
 
     /// <summary>
-    ///
+    ///     Initialize a database connection and ensure there are no connection
+    ///     isues. Also validate Data model.
+    ///     Create database and tables on Failure, also load backups if there are
+    ///     any.
     /// </summary>
-    /// <returns></returns>
+    /// <returns> An awaitable Task </returns>
     public static async Task Init()
     {
         try
@@ -394,10 +424,10 @@ public static class DataBase
             Log.Warn($"Creating a new one with name '{DbName}' as user {User}.");
 
             // Create Database.
-            await createDatabaseAsync();
+            await CreateDatabaseAsync();
 
             // Create Tables
-            await ensureDataBaseTables();
+            await EnsureDataBaseTables();
 
             // Try Loading database backups if there are any.
             Log.Warn($"Attempting to load DataBase backups");

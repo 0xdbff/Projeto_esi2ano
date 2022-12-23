@@ -1,64 +1,65 @@
 namespace Host;
 
 /// <summary>
-///
+///     Subscription Status
 /// </summary>
 internal enum SubscriptionStatus
 {
     /// <summary>
-    ///
+    ///     Active
     /// </summary>
     Active,
     /// <summary>
-    ///
+    ///     Inactive
     /// </summary>
     Inactive,
 }
 
 /// <summary>
-///
+///     Subscription Plan
 /// </summary>
 internal enum SubscriptionPlan
 {
     /// <summary>
-    ///
+    ///     Standard
     /// </summary>
     Standart,
     /// <summary>
-    ///
+    ///     Premium
     /// </summary>
     Premium,
 }
 
 /// <summary>
-///
+///     Subscription Class
 /// </summary>
 internal class Subscription
 {
-    /// <summary> </summary>
+    /// <summary> next payment date</summary>
     private DateTime nextPaymentDate;
 
-    /// <summary> </summary>
+    /// <summary> started date </summary>
     private DateTime startedDate;
 
-    /// <summary> </summary>
+    /// <summary> automatic renewal </summary>
     private bool AutomaticRenewal;
 
-    /// <summary> </summary>
+    /// <summary> comments </summary>
     private string? comments;
 
-    /// <summary> </summary>
+    /// <summary> number of cancellations </summary>
     private int nOfCancelations;
 
-    /// <summary> </summary>
+    /// <summary>  Subscription Status </summary>
     internal SubscriptionStatus Status { get; set; }
 
-    /// <summary> </summary>
+    /// <summary> Subscription Type </summary>
     internal SubscriptionPlan Type { get; set; }
-
+    
     /// <summary>
-    ///
+    ///     Subscription constructor 
     /// </summary>
+    /// <param name="type"> type </param>
     internal Subscription(SubscriptionPlan type)
     {
         Type = type;
@@ -66,10 +67,13 @@ internal class Subscription
     }
 
     /// <summary>
-    ///
+    ///     Subscription constructor.
     /// </summary>
     public Subscription() { }
 
+    /// <summary>
+    ///     Check payment status.
+    /// </summary>
     private static async Task checkPayments()
     {
         Thread thread = new Thread(() =>
@@ -86,10 +90,10 @@ internal class Subscription
     }
 
     /// <summary>
-    ///
+    ///     Get invoice async for current month.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="cc"></param>
+    /// <param name="type"> type </param>
+    /// <param name="cc">credit card </param>
     /// <returns></returns>
     public async Task<Invoice?> GenerateInvoiceForCurrentMonth(PaymentType type,
                                                                CreditCard? cc) =>

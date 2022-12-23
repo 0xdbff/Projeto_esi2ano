@@ -5,55 +5,55 @@ using static Data.DataBase;
 namespace Host;
 
 /// <summary>
-/// 
+///     Credit Card Type.
 /// </summary>
 internal enum CcType
 {
-    /// <summary> </summary>
+    /// <summary> Invalid Credit Card. </summary>
     Invalid,
-    /// <summary> </summary>
+    /// <summary> Visa credit Card.  </summary>
     Visa,
-    /// <summary> </summary>
+    /// <summary> Mastercard credit Card. </summary>
     MasterCard,
 }
 
 /// <summary>
-/// 
+///     Credit Card class.
 /// </summary>
 internal sealed class CreditCard
 {
     /// <summary>
-    /// 
+    ///     Credit card's -> number.
     /// </summary>
-    internal UInt64 CcNum { get; private set; }
+    internal ulong CcNum { get; private set; }
 
     /// <summary>
-    /// 
+    ///     Credit card's -> Expiry date.
     /// </summary>
     internal DateTime ExpiryDate { get; private set; }
 
     /// <summary>
-    /// 
+    ///     Credit card's -> inserted Date.
     /// </summary>
     internal DateTime InsertedDate { get; private set; }
 
     /// <summary>
-    /// 
+    ///     Credit card's -> Security code.
     /// </summary>
     internal string SecurityCode { get; private set; }
 
     /// <summary>
-    /// 
+    ///     Credit card's -> name.
     /// </summary>
     internal string CcName { get; private set; }
 
     /// <summary>
-    /// 
+    ///     Credit card's -> Type
     /// </summary>
     internal CcType CreditCardType { get; private set; }
 
     /// <summary>
-    /// 
+    ///     Credit card's constructor
     /// </summary>
     private CreditCard()
     {
@@ -62,7 +62,7 @@ internal sealed class CreditCard
     }
 
     /// <summary>
-    /// 
+    ///     Credit card's constructor.
     /// </summary>
     /// <param name="ccNum"></param>
     /// <param name="expiryDate"></param>
@@ -83,13 +83,13 @@ internal sealed class CreditCard
     }
 
     /// <summary>
-    /// 
+    ///     Insert Credit card to database.
     /// </summary>
-    /// <param name="clientId"></param>
-    /// <param name="cc"></param>
-    /// <returns></returns>
+    /// <param name="clientId">Client id</param>
+    /// <param name="cc"> Credit card </param>
+    /// <returns> And awaitable Tsk </returns>
     private static async Task<int>
-    InsertCreditCardToDb(Guid clientId, CreditCard cc) => await CmdExecuteNonQueryAsync(
+    InsertCreditCardToDbAsync(Guid clientId, CreditCard cc) => await CmdExecuteNonQueryAsync(
         $"INSERT into creditcard (CcNum, ClientId, ExpiryDate, SecurityCode, NameInCC)" +
         $"WITH VALUES ({cc.CcNum}, {clientId}, {cc.ExpiryDate},{cc.InsertedDate},{cc.CcName}," +
         $"{cc.CreditCardType})");
@@ -105,14 +105,14 @@ internal sealed class CreditCard
     
 
     /// <summary>
-    /// 
+    ///     Insert Credit card to database
     /// </summary>
-    /// <param name="clientId"></param>
-    /// <param name="cc"></param>
+    /// <param name="clientId"> Client id</param>
+    /// <param name="cc"> Credit card</param>
     /// <returns></returns>
-    /// <exception cref="DbInvalidDataException"></exception>
-    /// <exception cref="DuplicatePkException"></exception>
-    internal static async Task<CcType> InsertCreditCard(Guid clientId,
+    /// <exception cref="DbInvalidDataException"> invalid data</exception>
+    /// <exception cref="DuplicatePkException">duplicated </exception>
+    internal static async Task<CcType> InsertCreditCardAsync(Guid clientId,
                                                         CreditCard cc)
     {
         try
@@ -122,7 +122,7 @@ internal sealed class CreditCard
             if (validation == CcType.Invalid)
                 return validation;
 
-            if (await InsertCreditCardToDb(clientId, cc) == 1)
+            if (await InsertCreditCardToDbAsync(clientId, cc) == 1)
             {
                 return validation;
             }
@@ -148,19 +148,19 @@ internal sealed class CreditCard
     }
 
     /// <summary>
-    /// 
+    ///     Get all from database
     /// </summary>
-    /// <param name="clientId"></param>
-    /// <returns></returns>
+    /// <param name="clientId"> client Id</param>
+    /// <returns> Query from database </returns>
     private static async Task<List<Dictionary<int, object?>>?>
     GetCLientCreditCardsFromDb(Guid clientId) => await CmdExecuteQueryAsync(
         $"SELECT * FROM creditcard WHERE ClientID == {clientId}");
 
     /// <summary>
-    /// 
+    ///     Get all from database
     /// </summary>
-    /// <param name="clientId"></param>
-    /// <returns></returns>
+    /// <param name="clientId"> client Id</param>
+    /// <returns> A list of credit cards </returns>
     internal static async Task<List<CreditCard>?>
     GetClientCreditCards(Guid clientId)
     {

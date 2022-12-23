@@ -7,37 +7,37 @@ using static Utils.Security;
 namespace Host;
 
 /// <summary>
-///
+///     Invoice's Class.
 /// </summary>
 internal sealed class Invoice : Payment
 {
     /// <summary>
-    ///
+    ///     Include nif in invoice.
     /// </summary>
     private bool includeNif = true;
 
     /// <summary>
-    ///
+    ///     Invoice's Month.
     /// </summary>
     public DateOnly Month { get; private set; }
 
     /// <summary>
-    ///
+    ///     Invoice's construtor.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="amount"></param>
-    /// <param name="cc"></param>
+    /// <param name="type"> invoice type </param>
+    /// <param name="amount">amount </param>
+    /// <param name="cc"> credit card </param>
     private Invoice(PaymentType type, double amount, CreditCard? cc)
         : base(type, amount, cc) { }
 
     /// <summary>
-    ///
+    ///     Generate an invoice asynchronously.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="amount"></param>
-    /// <param name="cc"></param>
-    /// <param name="month"></param>
-    /// <returns></returns>
+    /// <param name="type"> type </param>
+    /// <param name="amount"> amount </param>
+    /// <param name="cc"> credit card </param>
+    /// <param name="month"> month </param>
+    /// <returns> An instance of invoice</returns>
     public static async Task<Invoice?> GetAsync(PaymentType type, double amount,
                                                 CreditCard? cc, DateOnly month)
     {
@@ -61,6 +61,9 @@ internal sealed class Invoice : Payment
     /// </summary>
     private static string invoiceSrcPath = "/home/db/dev/repo_g06/Invoice";
 
+    /// <summary>
+    ///     Clean up files after tex Compilation.
+    /// </summary>
     private static void CleanUp()
     {
         try
@@ -80,7 +83,7 @@ internal sealed class Invoice : Payment
     }
 
     /// <summary>
-    ///
+    ///     Generate Invoice for a client.
     /// </summary>
     public static async Task GenerateInvoicePdf(Client client)
     {
@@ -110,17 +113,17 @@ internal sealed class Invoice : Payment
     }
 
     /// <summary>
-    ///
+    ///     Generate tex source.
     /// </summary>
-    /// <param name="client"></param>
-    /// <returns></returns>
+    /// <param name="client"> An instance of a client </param>
+    /// <returns> a string with the path for compilation </returns>
     /// <exception cref="Exception"></exception>
-    public static async Task<string> GenInvoiceSrc(Client client)
+    private static async Task<string> GenInvoiceSrc(Client client)
     {
         if (client.subscription == null)
             throw new Exception("Invalid client");
 
-        var address = $@"NIF-{client.Nif}\\{client.Addresses[0].ToStringLatex()}";
+        var address = $@"NIF-{client.Nif}\\{client.Address.ToStringLatex()}";
         var name = client.Name;
         var email = "{" + client.Email + "}" + "{" + client.Email + "}";
         var month = DateTime.Now.ToString("Y");
@@ -129,7 +132,6 @@ internal sealed class Invoice : Payment
         var invoiceNumber = (new Random()).Next(0, 999999).ToString();
 
         string taxRate;
-        string product;
         string price;
         string qty = 1.ToString();
 
@@ -152,12 +154,10 @@ internal sealed class Invoice : Payment
         else
             throw new Exception("Invalid client");
 
-        product =
-            $"Subscription IpcaGym {client.subscription.Type} ({client.ClientType}), {month}";
+        var product = $"Subscription IpcaGym {client.subscription.Type} ({client.ClientType}), {month}";
 
         //! TODO optimize.
-        string invoiceSrc;
-        invoiceSrc = texSrc.Replace("TAXRATE", taxRate);
+        var invoiceSrc = texSrc.Replace("TAXRATE", taxRate);
         invoiceSrc = invoiceSrc.Replace("INVOICENUMBER", invoiceNumber);
         invoiceSrc = invoiceSrc.Replace("NAME", name);
         invoiceSrc = invoiceSrc.Replace("ADDRESS", address);
@@ -176,9 +176,7 @@ internal sealed class Invoice : Payment
         dir += $"/{SHA512(DateTime.Now.ToString() + client.Nif)}.tex";
 
         Console.WriteLine(dir);
-
-        // await CopyFileAsync(invoiceSrcPath + "/invoice.cls", dir +
-        // "/invoice.cls");
+        
         await WriteTextAsync(dir, invoiceSrc);
 
         return dir;

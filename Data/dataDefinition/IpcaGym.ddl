@@ -1,6 +1,6 @@
 CREATE TABLE Address (
   Code           uuid NOT NULL, 
-  PostalCode     int4 NOT NULL, 
+  PostalCode     varchar(255) NOT NULL, 
   Country        varchar(255) NOT NULL, 
   City           varchar(255) NOT NULL, 
   LastUpdateDate timestamp with time zone, 
@@ -107,6 +107,7 @@ CREATE TABLE LoginData (
   HashedPassword   varchar(255) NOT NULL, 
   TwoFactorAuthApp varchar(255), 
   LastLogin        timestamp with time zone, 
+  usertype         int4 NOT NULL,
   PRIMARY KEY (Username));
 
 CREATE TABLE MonthlyFinancialAnalysis (

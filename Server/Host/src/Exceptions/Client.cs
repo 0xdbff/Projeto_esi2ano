@@ -6,9 +6,9 @@
 internal class ClientException : UserException
 {
     /// <summary>
-    /// 
+    /// Class Constructor
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="message"> Exception message </param>
     internal ClientException(string message) : base(message)
     {
     }
@@ -20,9 +20,9 @@ internal class ClientException : UserException
 internal class InvalidClientDataException : ClientException
 {
     /// <summary>
-    /// 
+    /// Class Constructor
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="message"> Exception message </param>
     internal InvalidClientDataException(string message) : base(message)
     {
         

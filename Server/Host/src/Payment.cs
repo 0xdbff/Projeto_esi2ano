@@ -5,20 +5,20 @@ using static Data.DataBase;
 namespace Host;
 
 /// <summary>
-///
+///     Payment status used.
 /// </summary>
 internal enum PaymentStatus
 {
     /// <summary>
-    ///
+    ///     Waiting for payment.
     /// </summary>
     WaitingPayment,
     /// <summary>
-    ///
+    ///     Expired.
     /// </summary>
     Expired,
     /// <summary>
-    ///
+    ///     Completed.
     /// </summary>
     Completed,
 }
@@ -35,22 +35,22 @@ internal enum PaymentType
 }
 
 /// <summary>
-///
+///     Mb reference Class
 /// </summary>
 internal class MbRef
 {
     /// <summary>
-    ///
+    ///     reference expiry date.
     /// </summary>
     public DateTime ExpiryDate { get; set; }
 
     /// <summary>
-    ///
+    ///     Mb reference.
     /// </summary>
     public int Value { get; private set; }
 
     /// <summary>
-    ///
+    ///     Mb ref constructor.
     /// </summary>
     public MbRef()
     {
@@ -59,7 +59,7 @@ internal class MbRef
     }
 
     /// <summary>
-    ///
+    ///     Generate an instance of Mb reference
     /// </summary>
     private static int GenerateMbReference() =>
         // !TODO communicate with related services to get mb reference.
@@ -67,37 +67,37 @@ internal class MbRef
 }
 
 /// <summary>
-///
+///     Payment class.
 /// </summary>
 internal class Payment
 {
     /// <summary>
-    ///
+    ///     payment's expiry Date.
     /// </summary>
     public DateTime? ExpiryDate { get; private set; }
 
     /// <summary>
-    ///
+    ///     payment's paid data.
     /// </summary>
     public DateTime? PaidDate { get; private set; }
 
     /// <summary>
-    ///
+    ///     payment amount.
     /// </summary>
     public double Amount { get; private set; }
 
     /// <summary>
-    ///
+    ///     payment status.
     /// </summary>
     public PaymentStatus Status { get; private set; }
 
     /// <summary>
-    ///
+    ///     payment type used.
     /// </summary>
     public PaymentType PaymentTypeUsed { get; private set; }
 
     /// <summary>
-    ///
+    ///     Mb reference instance.
     /// </summary>
     public MbRef? MbReference { get; private set; }
 
@@ -106,11 +106,11 @@ internal class Payment
     #endregion
 
     /// <summary>
-    /// 
+    ///     Payment constructor
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="amount"></param>
-    /// <param name="cc"></param>
+    /// <param name="type"> type </param>
+    /// <param name="amount"> amount </param>
+    /// <param name="cc"> credit card </param>
     private protected Payment(PaymentType type, double amount, CreditCard? cc)
     {
         Amount = amount;
@@ -121,12 +121,12 @@ internal class Payment
     }
 
     /// <summary>
-    /// 
+    ///     Try a payment asynchronously.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="amount"></param>
-    /// <param name="cc"></param>
-    /// <returns></returns>
+    /// <param name="type">type </param>
+    /// <param name="amount">amount </param>
+    /// <param name="cc">credit card </param>
+    /// <returns>An instance of a payment </returns>
     public async Task PaymentAsync(PaymentType type, double amount,
                                    CreditCard? cc)
     {
@@ -145,16 +145,16 @@ internal class Payment
     /// <summary>
     ///     SIMULATED CODE, to verify payment was completed.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Banking validation</returns>
     private static async Task<bool> SomeBankingServiceAsync() =>
         // SIMULATED CODE
         await Task<bool>.Run(() => true);
 
     /// <summary>
-    /// 
+    ///     Try a payment with a credit card
     /// </summary>
     /// <param name="cc"></param>
-    /// <returns></returns>
+    /// <returns> payment status </returns>
     private async Task<PaymentStatus> TryPaymentCcAsync(CreditCard cc)
     {
         // !TODO this code needs to be changed... This line of code is also
@@ -175,10 +175,10 @@ internal class Payment
     }
 
     /// <summary>
-    /// 
+    ///     try a payment with mb reference.
     /// </summary>
     /// <param name="mbReference"></param>
-    /// <returns></returns>
+    /// <returns>payment status </returns>
     private async Task<PaymentStatus> TryPaymentRefMbAsync(MbRef mbReference)
     {
         // !TODO this code needs to be changed... This line of code is also

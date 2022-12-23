@@ -1,112 +1,108 @@
 namespace Host;
 
+using Data;
 using System.Text.Json;
+
 using static Data.DataBase;
 using static Utils.Logger;
-using Data;
-
 using Host.Json;
 
 /// <summary>
-///
+///     Address Class, Identifies a location.
 /// </summary>
 public sealed class Address
 {
     /// <summary>
-    ///
+    ///     A unique code that identifies an address.
     /// </summary>
+    //!TODO cannot insert to database
     public Guid? Code { get; private set; }
 
     /// <summary>
-    ///
+    ///     The client's address -> Postal.
     /// </summary>
     public string? PostalCode { get; set; }
 
     /// <summary>
-    ///
+    ///     The client's address -> Country.
     /// </summary>
     public string? Country { get; set; }
 
     /// <summary>
-    ///
+    ///     The client's address -> City.
     /// </summary>
     public string? City { get; set; }
 
     /// <summary>
-    ///
+    ///     The client's address -> Last time updated.
     /// </summary>
     public DateTime? LastUpdate { get; set; }
 
     /// <summary>
-    ///
+    ///     The client's address -> Additional info.
     /// </summary>
     public string? AdditionalInfo { get; set; }
 
     /// <summary>
-    ///
+    ///     The client's address -> House number.
     /// </summary>
     public int HouseNum { get; set; }
 
     /// <summary>
-    ///
+    ///     The client's address -> Localidade.
     /// </summary>
     public string? Localidade { get; set; }
 
     /// <summary>
-    ///
-    /// </summary>
-    public Task<bool> IsAddressValidAsync { get => ValidateAddress(); }
-
-    /// <summary>
-    ///     Await some service to verify given address;
+    ///     Await some service to verify given address (class instance);
+    ///     !TODO update service, always evaluates to <see langword="true"/>.
     /// </summary>
     /// <returns> An awaitable Task with address validation. </returns>
-    private async Task<bool>
-    ValidateAddress() => await Task<bool>.Run(() => true);
+    public async Task<bool>
+    IsAddressValidAsync() => await Task<bool>.Run(() => true);
 
     /// <summary>
-    /// /
+    ///     Serialize Address.
     /// </summary>
-    /// <param name="address"></param>
-    /// <returns></returns>
-    public static string? FromClassToJson(Address address)
-    {
-        return JsonSerializer.Serialize(address,
+    /// <param name="address">address instance </param>
+    /// <returns> a json string </returns>
+    public static string? FromClassToJson(Address address) =>
+        JsonSerializer.Serialize(address,
                                         AddressJsonContext.Default.Address);
-    }
 
     /// <summary>
-    ///
+    ///     An address example.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An instance of address. </returns>
     public static Address GenExample1() => new Address("4720-000", "Portugal",
                                                        "Braga", DateTime.Now,
                                                        "Rua exemplo", 20,
                                                        "Amares");
 
     /// <summary>
-    ///
+    ///     Address default constructor
     /// </summary>
     public Address() { }
 
     /// <summary>
-    ///
+    ///     Construct an address from json.
+    ///     Deserialize
     /// </summary>
-    /// <param name="json"></param>
-    /// <returns></returns>
+    /// <param name="json"> json </param>
+    /// <returns> An instance of Address </returns>
     public static Address? FromJson(string json) =>
         JsonSerializer.Deserialize(json, AddressJsonContext.Default.Address);
 
     /// <summary>
-    ///
+    ///     Construct an instance of Address with all values.
     /// </summary>
-    /// <param name="postalCode"></param>
-    /// <param name="country"></param>
-    /// <param name="city"></param>
-    /// <param name="lastUpdate"></param>
-    /// <param name="aditionalInfo"></param>
-    /// <param name="houseNum"></param>
-    /// <param name="localidade"></param>
+    /// <param name="postalCode"> Postal Code </param>
+    /// <param name="country"> Country </param>
+    /// <param name="city"> City </param>
+    /// <param name="lastUpdate"> Last Time updated </param>
+    /// <param name="aditionalInfo"> additional info </param>
+    /// <param name="houseNum"> house number </param>
+    /// <param name="localidade"> localidade </param>
     public Address(string postalCode, string country, string city,
                    DateTime lastUpdate, string? aditionalInfo, int houseNum,
                    string localidade)
@@ -121,37 +117,37 @@ public sealed class Address
     }
 
     /// <summary>
-    ///
+    ///     To string method for Address type
     /// </summary>
-    /// <returns></returns>
+    /// <returns> a string with address.</returns>
     public override
         string? ToString() => $"{Localidade}-{City}, {Country}\n" +
                               $"{PostalCode}, {AdditionalInfo} n{HouseNum}";
 
-    public override bool Equals(object? obj) => obj is Address
-                                                    ? Code == ((Address)obj).Code
-                                                    : false;
-
     /// <summary>
-    ///
+    ///     Convert to string to be used in invoice latex compilation.
     /// </summary>
-    /// <returns></returns>
+    /// <returns> an encoded string </returns>
     public string? ToStringLatex() =>
         $"{Localidade}-{City}, {Country}\\\\" + "\n" +
         $"{PostalCode}, {AdditionalInfo} n{HouseNum} \\\\";
 
+
+    //!TODO remove static
     /// <summary>
-    ///
+    ///     Insert address to Database.
     /// </summary>
-    internal async Task InsertToDb(string username)
+    /// <param name="a">Address</param>
+    /// <param name="username">username</param>
+    internal static async Task InsertToDbAsync(Address a, string username)
     {
         try
         {
-            await CmdExecuteNonQueryAsync(
-                $"INSERT into address(code, postalcode, country, city,  lastupdatedate," +
-                $"aditionalinfo, housenum, localidade, username) VALUES" +
-                $"({Code},'{PostalCode}','{Country}','{City}',(SELECT NOW())," +
-                $"'{AdditionalInfo}',{HouseNum},'{Localidade}','{username}');");
+            await CmdExecuteQueryAsync(
+                $"INSERT into address (code, postalcode, country, city,  lastupdatedate, " +
+                $"aditionalinfo, housenum, localidade, username) VALUES ( (SELECT (gen_random_uuid ())) " +
+                $", '{a.PostalCode}', '{a.Country}', '{a.City}', (SELECT NOW()) , '{a.AdditionalInfo}' " +
+                $", 2, '{a.Localidade}' , '{username}' )");
         }
         catch (DataBaseException e)
         {
@@ -159,7 +155,12 @@ public sealed class Address
         }
     }
 
-    internal static async Task<Address?> GetWithUsername(string username)
+    /// <summary>
+    ///     Get and instance of address with a username.
+    /// </summary>
+    /// <param name="username">username</param>
+    /// <returns>An instance of address related to the user</returns>
+    internal static async Task<Address?> GetWithUsernameAsync(string username)
     {
         try
         {
@@ -174,9 +175,9 @@ public sealed class Address
                                 select column)
                 switch (val.Key)
                 {
-                    case 0:
-                        data.Code = (Guid)val.Value;
-                        break;
+                    // case 0:
+                    //     data.Code = (Guid)val.Value;
+                    //     break;
                     case 1:
                         data.PostalCode = (String)val.Value;
                         break;
@@ -213,6 +214,19 @@ public sealed class Address
             return default;
         }
     }
+    
+    /// <summary>
+    ///     Equals override
+    /// </summary>
+    /// <param name="obj"> An instance of an object</param>
+    /// <returns> a boolean </returns>
+    public override bool Equals(object? obj) => obj is Address
+        ? Code == ((Address)obj).Code
+        : false;
 
+    /// <summary>
+    ///     Get hash code override
+    /// </summary>
+    /// <returns></returns>
     public override int GetHashCode() => Code.GetHashCode();
 }

@@ -1,30 +1,29 @@
-﻿namespace Host.Exceptions;
+namespace Host.Exceptions;
 
 /// <summary>
-/// 
+///     User Exceptions.
 /// </summary>
-internal class ClientException : UserException
+internal class UserException : Exception
 {
     /// <summary>
     /// Class Constructor
     /// </summary>
     /// <param name="message"> Exception message </param>
-    internal ClientException(string message) : base(message)
+    internal UserException(string message) : base(message)
     {
     }
 }
 
 /// <summary>
-/// 
+///     An Exception when an invalid User is found.
 /// </summary>
-internal class InvalidClientDataException : ClientException
+internal class InvalidUserException : UserException
 {
     /// <summary>
     /// Class Constructor
     /// </summary>
     /// <param name="message"> Exception message </param>
-    internal InvalidClientDataException(string message) : base(message)
+    internal InvalidUserException(string message) : base(message)
     {
-        
     }
 }

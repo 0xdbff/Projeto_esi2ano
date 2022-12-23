@@ -1,137 +1,29 @@
-﻿namespace Host;
+﻿namespace Host.Login;
 
 /// <summary>
-/// 
-/// </summary>
-internal enum UserType
-{
-    /// <summary> </summary>
-    Admin,
-    /// <summary> </summary>
-    Trainer,
-    /// <summary> </summary>
-    Client
-}
-
-/// <summary>
-/// 
-/// </summary>
-internal enum IpType
-{
-    v4,
-    v6
-}
-
-/// <summary>
-/// 
-/// </summary>
-internal struct Ip
-{ 
-    internal IpType Type { get; set; }
-}
-
-/// <summary>
-/// 
+/// Interface Login
 /// </summary>
 internal interface ILogin
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public enum AuthType
-    {
-        /// <summary> </summary>
-        Email,
-        /// <summary> </summary>
-        UserName,
-    }
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    internal struct UsedCredentials
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        internal AuthType AuthType { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal string? HashedPassword { get; private set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public string? AuthCode { get; private set; }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public enum LoginStatus
-    {
-        /// <summary> </summary>
-        LoggedIn,
-        /// <summary> </summary>
-        LoggedOut,
-        /// <summary> </summary>
-        DeviceLimitViolated,
-        /// <summary> </summary>
-        InvalidCredentials,
-        /// <summary> </summary>
-        UnauthoryzedLocation,
-        /// <summary> </summary>
-        WaitingForAuthCode,
-        /// <summary> </summary>
-        AuthCodeExpired,
-    }
-
-    #region data
-
-    /// <summary>
-    /// 
-    /// </summary>
-    internal struct Data
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        internal string? Username { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal string? HashedPassword { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal DateTime LastLogin { get; set; }
-    }
-
-    #endregion
-
     #region methods
 
     /// <summary>
-    /// 
+    ///     LogIn for a user that implements Ilogin.
     /// </summary>
     /// <returns></returns>
-    private protected LoginStatus Login();
+    private protected LoginStatus LogIn();
 
     /// <summary>
-    /// 
+    ///     LogOut for a user that implements Ilogin.
     /// </summary>
     /// <returns></returns>
-    internal static List<UsedCredentials>? GetCredentialsHistory() { return default; }
+    private protected LoginStatus LogOut();
 
     /// <summary>
-    /// 
+    ///     Get login history for a user that implements Ilogin.
     /// </summary>
     /// <returns></returns>
-    internal static List<Data>? GetLoginHistory() { return default; }
-    
+    internal static List<LoginAttempt>? GetLoginHistory() { return default; }
+
     #endregion
 }

@@ -1,0 +1,68 @@
+% Attribution and Licence Notice [http://www.latextemplates.com/template/minimal-invoice]
+% [https://creativecommons.org/licenses/by-nc-sa/4.0/]
+\documentclass[
+	a4paper,
+	9pt,
+]{~/dev/repo_g06/Invoice/invoice}
+\taxrate{0.0}
+\currencycode{EUR}
+\invoicenumber{40}
+\roundcurrencytodecimals{2}
+\roundquantitytodecimals{2}
+\sisetup{group-minimum-digits=4}
+\sisetup{group-separator={,}}
+\sisetup{output-decimal-marker={.}}
+\currencysuffix{}
+\begin{document}
+\setstretch{1.2}
+\outputheader{Invoice}{\today}
+\outputinvoicenum \\
+\begin{minipage}[t]{0.38\textwidth}
+	\textbf{Due:} \duedatedays{30}\\
+    \textbf{Project:} IpcaGym (Academic purposes)\\
+	\textbf{Description:} IpcaGym monthly subscription\\
+\end{minipage}
+\begin{minipage}[t]{0.03\textwidth}
+	~ 
+\end{minipage}
+\begin{minipage}[t]{0.56\textwidth}
+	\textbf{Diogo Antunes}
+	Amares Braga, 000-4720 \\
+	Rua exemplo, nº77 andar nº82 \\
+	\href{a21144@alunos.ipca.pt}{a21144@alunos.ipca.pt}
+\end{minipage}
+\setstretch{1}
+\vfill
+\begin{invoicetable}
+    \invoiceitem{Subscription IpcaGym Premium (Academic client), month December}{1}{16.28}{}
+\end{invoicetable}
+\vfill\vfill
+\invoiceconditions{Service provided by Instituto Politécnico do Cávado e Ave (Academic work).}
+\begin{minipage}[t]{0.3\textwidth}
+	\itshape
+	\textbf{Address:}\\
+    Campus do IPCA - Lugar do Aldão,\\
+    4750-810 Vila Frescainha\\
+    (São Martinho)\\
+    Barcelos, Portugal.
+\end{minipage}
+\begin{minipage}[t]{0.03\textwidth}
+	~
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+	\itshape
+	\textbf{Contact:}\\
+	\href{https://est.ipca.pt/}{https://est.ipca.pt/}\\
+    \href{support@ipcagym.org}{support@ipcagym.org} \\
+\end{minipage}
+\begin{minipage}[t]{0.03\textwidth}
+	~
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+	\itshape
+	\textbf{Payment:}\\
+	Bank of Portugal \\
+	Sort Code: 010-110 \\
+	Account: 10011001110 \\
+\end{minipage}
+\end{document}

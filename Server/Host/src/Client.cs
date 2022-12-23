@@ -127,8 +127,11 @@ internal sealed class Client : Person, ILogin
     /// <param name="nif"></param>
     /// <param name="address"></param>
     public Client(string firstName, string lastName, Gender gender,
-                  DateTime dateOfBirth, ulong nif, Address address, string email)
-        : base(firstName, lastName, gender, dateOfBirth, nif, address, email) { }
+                  DateTime dateOfBirth, int nif, Address address, string email,
+                  LoginData loginData)
+        : base(firstName, lastName, gender, dateOfBirth, nif, address, email,
+               loginData)
+    { }
 
     #endregion
 
@@ -182,27 +185,27 @@ internal sealed class Client : Person, ILogin
 
         try
         {
-            var addr = Address.GenExample1();
-
-            var client1 = new Client("Diogo", "Antunes", Gender.Male,
-                                     new DateTime(2002, 05, 20), 100000002, addr,
-                                     "a21144@alunos@ipca.pt");
-
-            client1.Weight = 60.2;
-            client1.Height = 1.71;
-            client1.ClientType = ClientType.Common;
-
-            client1.subscription = new Subscription();
-
-            client1.subscription.Type = SubscriptionPlan.Premium;
-
-            var cc = client1.cc != null ? client1.cc[0] : null;
-
-            var invoice = await Invoice.GetAsync(PaymentType.CreditCard, 8.0, cc,
-                                                 DateOnly.FromDateTime(DateTime.Now));
-
-            if (invoice != null)
-                await Invoice.GenerateInvoicePdf(client1);
+            // var addr = Address.GenExample1();
+            //
+            // var client1 = new Client("Diogo", "Antunes", Gender.Male,
+            //                          new DateTime(2002, 05, 20), 100000002, addr,
+            //                          "a21144@alunos@ipca.pt");
+            //
+            // client1.Weight = 60.2;
+            // client1.Height = 1.71;
+            // client1.ClientType = ClientType.Common;
+            //
+            // client1.subscription = new Subscription();
+            //
+            // client1.subscription.Type = SubscriptionPlan.Premium;
+            //
+            // var cc = client1.cc != null ? client1.cc[0] : null;
+            //
+            // var invoice = await Invoice.GetAsync(PaymentType.CreditCard, 8.0, cc,
+            //                                      DateOnly.FromDateTime(DateTime.Now));
+            //
+            // if (invoice != null)
+            //     await Invoice.GenerateInvoicePdf(client1);
         }
         catch (Exception e)
         {
@@ -227,9 +230,6 @@ internal sealed class Client : Person, ILogin
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     LoginStatus ILogin.LogIn() { throw new NotImplementedException(); }
-
-    private protected override
-        Task InsertUser(Person user) => throw new NotImplementedException();
 
     /// <summary>
     ///

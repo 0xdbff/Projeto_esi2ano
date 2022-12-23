@@ -3,7 +3,7 @@
 /// <summary>
 /// 
 /// </summary>
-internal class ClientException : Exception
+internal class ClientException : UserException
 {
     /// <summary>
     /// 

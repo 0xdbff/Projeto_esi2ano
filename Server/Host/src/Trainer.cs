@@ -17,13 +17,11 @@ internal class Trainer : Person, ILogin
     /// <param name="nif"></param>
     /// <param name="address"></param>
     public Trainer(string firstName, string lastName, Gender gender,
-                   DateTime dateOfBirth, ulong nif, Address address, string email)
-        : base(firstName, lastName, gender, dateOfBirth, nif, address, email) { }
-
-    private protected override Task InsertUser(Person user)
-    {
-        throw new NotImplementedException();
-    }
+                   DateTime dateOfBirth, int nif, Address address, string email,
+                   LoginData loginData)
+        : base(firstName, lastName, gender, dateOfBirth, nif, address, email,
+               loginData)
+    { }
 
     /// <summary>
     ///

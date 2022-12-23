@@ -12,9 +12,9 @@ public static class DataBase
     #region bakup_path
 
     /// <summary> </summary>
-    private static string? backupDdlPath = "~/dev/repo_g06/data/";
+    private static string? backupDdlPath = "/home/db/dev/repo_g06/Data/dataDefinition/";
 
-    private static string? backupDbPath = "~/dev/repo_g06/data/";
+    private static string? backupDbPath = "/home/db/dev/repo_g06/Data/backup/";
 
     #endregion
 
@@ -369,8 +369,10 @@ public static class DataBase
         {
             // Test if there is a database with {DbName}
             var queryReturn = await AdminCmdExecuteQueryAsync<string>(
-                $"SELECT datname FROM pg_catalog.pg_database" +
+                $"SELECT datname FROM pg_catalog.pg_database " +
                 $"WHERE lower(datname) = lower('{DbName}')");
+
+            Console.WriteLine(queryReturn);
 
             if (queryReturn == DbName.ToLower())
             {

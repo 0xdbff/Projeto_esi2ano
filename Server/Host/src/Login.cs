@@ -145,7 +145,7 @@ internal class LoginData
                 new LoginData(username, hashedPassword, twoFactorAuth, lastLogin);
 
             // Insert to database.
-            await newUser.InsertToDb();
+            await newUser.InsertToDbAsync();
 
             return newUser;
         }
@@ -160,7 +160,7 @@ internal class LoginData
     /// <summary>
     ///
     /// </summary>
-    internal async Task InsertToDb()
+    internal async Task InsertToDbAsync()
     {
         try
         {
@@ -174,37 +174,50 @@ internal class LoginData
         }
     }
 
-    internal static async Task<LoginData?> GetWithUsername(string username)
+    internal static async Task<LoginData?> GetWithUsernameAsync(string username)
     {
-        var values = await CmdExecuteQuerySingleAsync(
-            $"SELECT * from logindata WHERE username = '{username}';");
+        try
+        {
+            var values = await CmdExecuteQuerySingleAsync(
+                $"SELECT * from logindata WHERE username = '{username}';");
 
-        var data = new LoginData();
+            var data = new LoginData();
 
-        foreach (var val in from column in values
-                            where values is not null
-                            where column.Value is not System.DBNull
-                            select column)
-            switch (val.Key)
-            {
-                case 0:
-                    data.Username = (String)val.Value;
-                    break;
-                case 1:
-                    data.HashedPassword = (String)val.Value;
-                    break;
-                case 2:
-                    data.TwoFactorAuth = (String)val.Value;
-                    break;
-                case 3:
-                    data.LastLogin = (DateTime)val.Value;
-                    break;
-            }
+            foreach (var val in from column in values
+                                where values is not null
+                                where column.Value is not System.DBNull
+                                select column)
+                switch (val.Key)
+                {
+                    case 0:
+                        data.Username = (String)val.Value;
+                        break;
+                    case 1:
+                        data.HashedPassword = (String)val.Value;
+                        break;
+                    case 2:
+                        data.TwoFactorAuth = (String)val.Value;
+                        break;
+                    case 3:
+                        data.LastLogin = (DateTime)val.Value;
+                        break;
+                }
 
-        return data;
+            return data;
+        }
+        catch (DataBaseException e)
+        {
+            Log.Error(e);
+            return default;
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+            return default;
+        }
     }
 
-    internal static async Task<List<LoginData>?> GetAll()
+    internal static async Task<List<LoginData>?> GetAllAsync()
     {
         try
         {

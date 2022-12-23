@@ -7,22 +7,21 @@ namespace Host;
 /// </summary>
 internal class Gym
 {
-    /// <summary>
-    ///
-    /// </summary>
-    internal static List<Client>? Clients { get; }
-
-    /// <summary>
-    ///
-    /// </summary>
-    internal static List<Admin>? Admins { get; }
-
-    /// <summary>
-    ///
-    /// </summary>
-    internal static List<Trainer>? Trainers { get; }
-
     #region Attributes
+    /// <summary>
+    ///
+    /// </summary>
+    internal static List<Client> Clients { get; } = new();
+
+    /// <summary>
+    ///
+    /// </summary>
+    internal static List<Admin> Admins { get; } = new();
+
+    /// <summary>
+    ///
+    /// </summary>
+    internal static List<Trainer> Trainers { get; } = new();
 
     /// <summary>
     ///
@@ -32,25 +31,25 @@ internal class Gym
     /// <summary>
     ///
     /// </summary>
-    public static uint numClientes;
+    public int numClientes { get => Clients.Count(); }
 
     /// <summary>
     ///
     /// </summary>
-    private static uint numFuncionarios;
+    public int numFuncionarios { get => Trainers.Count(); }
 
     /// <summary>
     ///
     /// </summary>
-    private static uint lotacaoTotal;
+    internal int lotacaoTotal {get; private set;}
 
     /// <summary>
     ///
     /// </summary>
-    private static uint LotacaoAtual;
+    internal int LotacaoAtual {get; private set;}
 
     /// <summary>
-    ///     The gym's mb reference.
+    ///     The gym's mb entity.
     /// </summary>
     public static int MbEntity = 62013;
 
@@ -65,10 +64,9 @@ internal class Gym
 
     private async Task InsertDefaultGymAsync()
     {
-        //
         Id = Guid.NewGuid();
 
-        // var 
+        // var
         //
         // await  CmdExecuteNonQueryAsync(
         //         $"INSERT INTO logindata(username,hashedpassword) VALUES" +

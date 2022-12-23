@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS Address (
+CREATE TABLE Address (
   Code           uuid NOT NULL, 
   PostalCode     int4 NOT NULL, 
   Country        varchar(255) NOT NULL, 
@@ -6,32 +6,32 @@ CREATE TABLE IF NOT EXISTS Address (
   LastUpdateDate timestamp with time zone, 
   AditionalInfo  varchar(255), 
   HouseNum       int4 NOT NULL, 
-  Localidade     int4 NOT NULL, 
+  Localidade     varchar(255) NOT NULL, 
   Username       varchar(255) NOT NULL, 
   PRIMARY KEY (Code));
 
-CREATE TABLE IF NOT EXISTS Admin (
+CREATE TABLE Admin (
   ID                uuid NOT NULL, 
   LoginDataUsername varchar(255) NOT NULL, 
   GymCode           uuid NOT NULL, 
   PRIMARY KEY (ID));
 
-CREATE TABLE IF NOT EXISTS Client (
+CREATE TABLE Client (
   ID                uuid NOT NULL, 
   LoginDataUsername varchar(255) NOT NULL UNIQUE, 
   GymCode           uuid NOT NULL, 
   PRIMARY KEY (ID));
 
-CREATE TABLE IF NOT EXISTS CreditCard (
+CREATE TABLE CreditCard (
   CCnum        SERIAL NOT NULL, 
   ClientID     uuid NOT NULL UNIQUE, 
   ExpiryDate   timestamp with time zone NOT NULL, 
   InsertedDate timestamp with time zone NOT NULL, 
   SecurityCode int4 NOT NULL, 
-  NameInCC     int4 NOT NULL, 
+  NameInCC     varchar(255) NOT NULL, 
   PRIMARY KEY (CCnum));
 
-CREATE TABLE IF NOT EXISTS DeviceLogin (
+CREATE TABLE DeviceLogin (
   GlobalIp          varchar(255) NOT NULL, 
   LogedDate         timestamp with time zone NOT NULL, 
   LoginDataUsername varchar(255) NOT NULL, 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS DeviceLogin (
   PRIMARY KEY (GlobalIp, 
   LogedDate));
 
-CREATE TABLE IF NOT EXISTS emailInfo (
+CREATE TABLE emailInfo (
   email             varchar(255) NOT NULL, 
   LoginDataUsername varchar(255) NOT NULL, 
   Validated         int4 NOT NULL, 
@@ -50,19 +50,12 @@ CREATE TABLE IF NOT EXISTS emailInfo (
   SubscrivedToNews  bool, 
   PRIMARY KEY (email));
 
-CREATE TABLE IF NOT EXISTS EmailType (
+CREATE TABLE EmailType (
   Type        SERIAL NOT NULL, 
   Description varchar(255) NOT NULL, 
   PRIMARY KEY (Type));
 
-CREATE TABLE IF NOT EXISTS EncryptedArea (
-  Email  varchar(255) NOT NULL, 
-  field1 varchar(255), 
-  field2 varchar(255), 
-  field3 varchar(255), 
-  PRIMARY KEY (Email));
-
-CREATE TABLE IF NOT EXISTS Event (
+CREATE TABLE Event (
   Code            uuid NOT NULL, 
   ClientID        uuid NOT NULL, 
   TrainerID       uuid, 
@@ -71,15 +64,15 @@ CREATE TABLE IF NOT EXISTS Event (
   GymCode         uuid NOT NULL, 
   StartDate       timestamp with time zone NOT NULL, 
   EndDate         timestamp with time zone NOT NULL, 
-  Comments        varchar(255),
+  Comments        varchar(255), 
   PRIMARY KEY (Code));
 
-CREATE TABLE IF NOT EXISTS EventType (
+CREATE TABLE EventType (
   Type        SERIAL NOT NULL, 
   Description varchar(255) NOT NULL, 
   PRIMARY KEY (Type));
 
-CREATE TABLE IF NOT EXISTS ExteriorSpace (
+CREATE TABLE ExteriorSpace (
   SpaceID           uuid NOT NULL, 
   ClientCapacity    int4 NOT NULL, 
   CurrentNofClients int4 NOT NULL, 
@@ -88,12 +81,12 @@ CREATE TABLE IF NOT EXISTS ExteriorSpace (
   GymCode           uuid NOT NULL, 
   PRIMARY KEY (SpaceID));
 
-CREATE TABLE IF NOT EXISTS ExteriorSpaceType (
+CREATE TABLE ExteriorSpaceType (
   Type        SERIAL NOT NULL, 
   Description varchar(255), 
   PRIMARY KEY (Type));
 
-CREATE TABLE IF NOT EXISTS Gym (
+CREATE TABLE Gym (
   Code              uuid NOT NULL, 
   ClientCapacity    int4 NOT NULL, 
   CurrentNofClients int4 NOT NULL, 
@@ -102,51 +95,46 @@ CREATE TABLE IF NOT EXISTS Gym (
   AddressCode       uuid NOT NULL, 
   PRIMARY KEY (Code));
 
-CREATE TABLE IF NOT EXISTS Invoice (
+CREATE TABLE Invoice (
   PaymentCheckNum uuid NOT NULL, 
   Tax             int4, 
   Email           bool, 
   IncludeNif      bool, 
   PRIMARY KEY (PaymentCheckNum));
 
-CREATE TABLE IF NOT EXISTS LoginData (
+CREATE TABLE LoginData (
   Username         varchar(255) NOT NULL, 
   HashedPassword   varchar(255) NOT NULL, 
   TwoFactorAuthApp varchar(255), 
   LastLogin        timestamp with time zone, 
   PRIMARY KEY (Username));
 
-CREATE TABLE IF NOT EXISTS MonthlyFinancialAnalysis (
+CREATE TABLE MonthlyFinancialAnalysis (
   month    date NOT NULL, 
   Expenses float8 NOT NULL, 
   Income   float8 NOT NULL, 
   GymCode  uuid NOT NULL, 
   PRIMARY KEY (month));
 
-CREATE TABLE IF NOT EXISTS Objective (
-  ClientID    uuid NOT NULL, 
-  Description varchar(255) NOT NULL, 
-  PRIMARY KEY (ClientID));
-
-CREATE TABLE IF NOT EXISTS Payment (
+CREATE TABLE Payment (
   CheckNum    uuid NOT NULL, 
   ClientID    uuid NOT NULL UNIQUE, 
   GymCode     uuid NOT NULL UNIQUE, 
   PaidDate    timestamp with time zone, 
-  Amount      numeric(19, 0) NOT NULL, 
+  Amount      float8 NOT NULL, 
   ExpiryDate  timestamp with time zone NOT NULL, 
   PaymentInfo varchar(255) NOT NULL, 
   status      varchar(255) NOT NULL, 
   RefMb       int4, 
   PRIMARY KEY (CheckNum));
 
-CREATE TABLE IF NOT EXISTS PaymentType (
+CREATE TABLE PaymentType (
   Type            SERIAL NOT NULL, 
   PaymentCheckNum uuid NOT NULL, 
   Description     varchar(255) NOT NULL, 
   PRIMARY KEY (Type));
 
-CREATE TABLE IF NOT EXISTS PhysicalConditionByMonth (
+CREATE TABLE PhysicalConditionByMonth (
   ClientID uuid NOT NULL UNIQUE, 
   month    date NOT NULL, 
   Height   float8, 
@@ -155,12 +143,12 @@ CREATE TABLE IF NOT EXISTS PhysicalConditionByMonth (
   PRIMARY KEY (ClientID, 
   month));
 
-CREATE TABLE IF NOT EXISTS RefMb (
+CREATE TABLE RefMb (
   reference     SERIAL NOT NULL, 
   RefExpiryDate int4 NOT NULL, 
   PRIMARY KEY (reference));
 
-CREATE TABLE IF NOT EXISTS StatisticsByMonth (
+CREATE TABLE StatisticsByMonth (
   ClientID                  uuid NOT NULL UNIQUE, 
   Month                     date NOT NULL, 
   RunnedDistance            float8, 
@@ -171,7 +159,7 @@ CREATE TABLE IF NOT EXISTS StatisticsByMonth (
   PRIMARY KEY (ClientID, 
   Month));
 
-CREATE TABLE IF NOT EXISTS Subscription (
+CREATE TABLE Subscription (
   ClientID            uuid NOT NULL, 
   SubscriptionType    int4 NOT NULL, 
   RequiredPaymentDate timestamp with time zone NOT NULL, 
@@ -182,30 +170,23 @@ CREATE TABLE IF NOT EXISTS Subscription (
   NOfCancelations     int4 NOT NULL, 
   PRIMARY KEY (ClientID));
 
-CREATE TABLE IF NOT EXISTS SubscriptionType (
+CREATE TABLE SubscriptionType (
   type        SERIAL NOT NULL, 
   Description varchar(255) NOT NULL, 
   NormalPrice float8 NOT NULL, 
   PRIMARY KEY (type));
 
-CREATE TABLE IF NOT EXISTS Trainer (
+CREATE TABLE Trainer (
   ID                uuid NOT NULL, 
   LoginDataUsername varchar(255) NOT NULL, 
   GymCode           uuid NOT NULL, 
   Rating            float8, 
   PRIMARY KEY (ID));
 
-CREATE TABLE IF NOT EXISTS TrainersScheduleByMonth (
-  TrainerID uuid NOT NULL, 
-  Month     date NOT NULL, 
-  daysOff   varchar(255) NOT NULL, 
-  PRIMARY KEY (TrainerID, 
-  Month));
-
-CREATE TABLE IF NOT EXISTS UserData (
+CREATE TABLE UserData (
   LoginDataUsername varchar(255) NOT NULL, 
-  FirstName         int4 NOT NULL, 
-  LastName          int4 NOT NULL, 
+  FirstName         varchar(255) NOT NULL, 
+  LastName          varchar(255) NOT NULL, 
   BirthDate         timestamp with time zone NOT NULL, 
   Gender            int4 NOT NULL, 
   Nif               int4 NOT NULL, 
@@ -236,14 +217,11 @@ ALTER TABLE UserData ADD CONSTRAINT FKUserData634915 FOREIGN KEY (LoginDataUsern
 ALTER TABLE Address ADD CONSTRAINT FKAddress393741 FOREIGN KEY (Username) REFERENCES UserData (LoginDataUsername);
 ALTER TABLE Event ADD CONSTRAINT FKEvent303692 FOREIGN KEY (GymCode) REFERENCES Gym (Code);
 ALTER TABLE Event ADD CONSTRAINT FKEvent667295 FOREIGN KEY (ExteriorSpaceID) REFERENCES ExteriorSpace (SpaceID);
-ALTER TABLE TrainersScheduleByMonth ADD CONSTRAINT FKTrainersSc974661 FOREIGN KEY (TrainerID) REFERENCES Trainer (ID);
 ALTER TABLE Payment ADD CONSTRAINT FKPayment492783 FOREIGN KEY (RefMb) REFERENCES RefMb (reference);
 ALTER TABLE PaymentType ADD CONSTRAINT FKPaymentTyp295765 FOREIGN KEY (PaymentCheckNum) REFERENCES Payment (CheckNum);
 ALTER TABLE Invoice ADD CONSTRAINT FKInvoice65249 FOREIGN KEY (PaymentCheckNum) REFERENCES Payment (CheckNum);
 ALTER TABLE MonthlyFinancialAnalysis ADD CONSTRAINT FKMonthlyFin331142 FOREIGN KEY (GymCode) REFERENCES Gym (Code);
 ALTER TABLE PhysicalConditionByMonth ADD CONSTRAINT FKPhysicalCo377299 FOREIGN KEY (ClientID) REFERENCES Client (ID);
-ALTER TABLE Objective ADD CONSTRAINT FKObjective409133 FOREIGN KEY (ClientID) REFERENCES Client (ID);
 ALTER TABLE Subscription ADD CONSTRAINT FKSubscripti49420 FOREIGN KEY (SubscriptionType) REFERENCES SubscriptionType (type);
 ALTER TABLE emailInfo ADD CONSTRAINT FKemailInfo392873 FOREIGN KEY (EmailTypeType) REFERENCES EmailType (Type);
 ALTER TABLE StatisticsByMonth ADD CONSTRAINT FKStatistics473745 FOREIGN KEY (ClientID) REFERENCES Client (ID);
-

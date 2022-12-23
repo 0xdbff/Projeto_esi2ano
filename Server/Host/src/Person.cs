@@ -1,4 +1,8 @@
 using static Data.DataBase;
+using static Utils.Logger;
+
+using Host.Login;
+using Data;
 
 namespace Host;
 
@@ -35,8 +39,8 @@ internal abstract class Person : Gym
     /// <param name="nif"></param>
     /// <param name="address"></param>
     internal Person(string firstName, string lastName, Gender gender,
-                    DateTime dateOfBirth, ulong nif, Address address,
-                    string email)
+                    DateTime dateOfBirth, int nif, Address address,
+                    string email, LoginData loginData)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -45,10 +49,20 @@ internal abstract class Person : Gym
         Nif = nif;
         Email = email;
 
+        LoginData = loginData;
+
         Addresses = new List<Address>();
         Addresses.Add(address);
     }
 
+    /// <summary>
+    ///     The user's first name.
+    /// </summary>
+    public LoginData LoginData { get; private set; }
+
+    /// <summary>
+    ///     The user's Full name.
+    /// </summary>
     public string Name { get => FirstName + " " + LastName; }
 
     /// <summary>
@@ -74,7 +88,12 @@ internal abstract class Person : Gym
     /// <summary>
     ///     The user's nif.
     /// </summary>
-    public ulong Nif { get; private set; }
+    public int Nif { get; private set; }
+
+    /// <summary>
+    ///     The user's nif.
+    /// </summary>
+    public int Phone { get; private set; } = 900000000;
 
     /// <summary>
     ///     The user's email.
@@ -103,7 +122,27 @@ internal abstract class Person : Gym
 
     #region abstract_methods
 
-    private protected abstract Task InsertUser(Person user);
+    private protected async Task InsertUserDataToDbAsync(string username)
+    {
+        try
+        {
+            Console.WriteLine(DateOfBirth);
+
+            await CmdExecuteNonQueryAsync(
+                $"insert into userdata(logindatausername,firstname,lastname,birthdate,gender,nif,phone,usersince)" +
+                $" VALUES ('{username}','{FirstName}','{LastName}', '{DateOfBirth}', {(int)Gender}, {Nif}," +
+                $" {Phone}, (SELECT NOW()) );");
+        }
+        catch (DataBaseException e)
+        {
+            Log.Error(e);
+        }
+    }
+
+    private protected async Task GetUserDataAsync()
+    {
+        //
+    }
 
     #endregion
 }

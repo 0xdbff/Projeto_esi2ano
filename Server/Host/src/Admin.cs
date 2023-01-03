@@ -15,7 +15,7 @@ internal class Admin : Person, ILogin
 {
     /// <summary>
     ///     A struct to perform analysis by month.
-    ///     All instance will be static. 
+    ///     All instance will be static.
     /// </summary>
     private struct AnalysisByMonth
     {
@@ -53,7 +53,6 @@ internal class Admin : Person, ILogin
     /// </summary>
     private static List<AnalysisByMonth>? analysis;
 
-
     /// <summary>
     ///     Admin constructor.
     /// </summary>
@@ -67,13 +66,13 @@ internal class Admin : Person, ILogin
     /// <param name="loginData"> login data </param>
     private Admin(string firstName, string lastName, Gender gender,
                   DateTime dateOfBirth, int nif, Address address, string email,
-                  LoginData loginData)
+                  EmailType emailType, LoginData loginData)
         : base(firstName, lastName, gender, dateOfBirth, nif, address, email,
-               loginData)
+               emailType, loginData)
     { }
 
     /// <summary>
-    ///     Create a new admin and insert to database asynchronously.  
+    ///     Create a new admin and insert to database asynchronously.
     /// </summary>
     /// <param name="firstName"> First name </param>
     /// <param name="lastName"> Last name </param>
@@ -90,20 +89,22 @@ internal class Admin : Person, ILogin
     internal static async Task<Admin?>
     NewAdminAsync(string firstName, string lastName, Gender gender,
                   DateTime dateOfBirth, int nif, Address address, string email,
-                  string username, string hashedPassword, string twoFactorAuth
-                  )
+                  EmailType emailType, string username, string hashedPassword,
+                  string twoFactorAuth)
     {
         try
         {
-            var loginData = await LoginData.NewUserAsync(
-                username, hashedPassword, twoFactorAuth, DateTime.Now,UserType.Admin);
+            var loginData =
+                await LoginData.NewUserAsync(username, hashedPassword, twoFactorAuth,
+                                             DateTime.Now, UserType.Admin);
 
             if (loginData != null)
             {
                 var admin = new Admin(firstName, lastName, gender, dateOfBirth, nif,
-                                      address, email, loginData);
+                                      address, email, emailType, loginData);
                 // insert to database.
                 await admin.InsertUserDataToDbAsync(username);
+                await admin.InsertEmailDataToDbAsync(username, emailType);
                 await Address.InsertToDbAsync(address, username);
 
                 return admin;
@@ -118,6 +119,23 @@ internal class Admin : Person, ILogin
         }
     }
 
+    private static async Task EnsureTypesDatabase()
+    {
+        try
+        {
+            var eval = (await CmdExecuteQueryAsync<int>(
+                "select count(type) from emailtype;"));
+
+            if ((eval) != 3)
+                await CmdExecuteNonQueryAsync(
+                    "insert into emailtype(type, description) values (0, 'academic'), (1, 'common'), (2, 'gymEmail')");
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+        }
+    }
+
     /// <summary>
     ///     Insert a default Administrator if one does not already exists.
     /// </summary>
@@ -125,7 +143,8 @@ internal class Admin : Person, ILogin
     {
         try
         {
-            if (await GetWithUsername("IpcaGymAdmin") != null)
+            await EnsureTypesDatabase();
+            if (await GetWithUsernameAsync("IpcaGymAdmin") != null)
                 return;
             else
                 await InsertDefaultAdmin();
@@ -141,13 +160,12 @@ internal class Admin : Person, ILogin
     ///     Insert default Administrator asynchronously.
     /// </summary>
     /// <returns> An awaitable Task </returns>
-    private static async Task
-    InsertDefaultAdmin() => await Admin.NewAdminAsync(
+    private static async Task InsertDefaultAdmin() => await Admin.NewAdminAsync(
         "default", "admin", 0, new DateTime(1999, 1, 1), 10000000,
         new Address("4750-810", "Portugal", "Barcelos", DateTime.Now,
                     "Lugar do Aldão", 0, "Vila Frescainha (São Martinho)"),
-        "admin@ipcagym.org", "IpcaGymAdmin", SHA512($"IpcaGymPa$$word!"), ""
-        );
+        "admin@ipcagym.org", EmailType.GymEmail, "IpcaGymAdmin",
+        SHA512($"IpcaGymPa$$word!"), "");
 
     /// <summary>
     ///     try Get an instance of Admin with a username.
@@ -155,13 +173,14 @@ internal class Admin : Person, ILogin
     /// <param name="username"> username </param>
     /// <returns> And instance of Admin or null</returns>
     /// <exception cref="InvalidUserException"></exception>
-    internal static async Task<Admin?> GetWithUsername(string username)
+    internal static async Task<Admin?> GetWithUsernameAsync(string username)
     {
         try
         {
             var values = await CmdExecuteQuerySingleAsync(
-                $"select * from userdata where logindatausername='{username}' and " +
-                $"((select (usertype) from logindata where username = '{username}') = 0);");
+                $"select * from userdata inner join logindata " +
+                $"on userdata.logindatausername = logindata.username where " +
+                $"userdata.logindatausername = '{username}' and logindata.usertype = 0");
 
             string? firstName = default;
             string? lastName = default;
@@ -170,6 +189,7 @@ internal class Admin : Person, ILogin
             Gender gender = default;
             int nif = default;
             string? email = default;
+            EmailType? emailType = default;
             int? phone = default;
 
             foreach (var val in from column in values
@@ -188,7 +208,7 @@ internal class Admin : Person, ILogin
                         birthDate = (DateTime)val.Value;
                         break;
                     case 4:
-                        gender = (Gender)val.Value;
+                        Gender.TryParse((string)val.Value, out gender);
                         break;
                     case 5:
                         nif = (int)val.Value;
@@ -203,15 +223,16 @@ internal class Admin : Person, ILogin
 
             var address = await Address.GetWithUsernameAsync(username);
 
-            var loginData =
-                await LoginData.GetWithUsernameAsync(username);
+            var loginData = await LoginData.GetWithUsernameAsync(username);
+
+            (email, emailType) = await Person.GetEmailWithUsername(username);
 
             if (loginData == null || loginData == null || firstName == null ||
-                lastName == null || address == null)
+                lastName == null || address == null || email == null)
                 throw new InvalidUserException("Invalid data");
 
             return new Admin(firstName, lastName, gender, birthDate, nif,
-                             address, email, loginData);
+                             address, email, (EmailType)emailType, loginData);
         }
         catch (DataBaseException e)
         {
@@ -235,7 +256,8 @@ internal class Admin : Person, ILogin
         try
         {
             var values = await CmdExecuteQueryAsync(
-                "select * from userdata where ((select (usertype) from logindata) = 0);");
+                $"select * from userdata inner join logindata " +
+                $"on userdata.logindatausername = logindata.username where logindata.usertype = 0");
             var list = new List<Admin>();
 
             foreach (var line in from line in values
@@ -250,6 +272,7 @@ internal class Admin : Person, ILogin
                 Gender gender = default;
                 int nif = default;
                 string? email = default;
+                EmailType? emailType = default;
                 int? phone = default;
 
                 foreach (var val in from column in line
@@ -291,12 +314,17 @@ internal class Admin : Person, ILogin
                 LoginData? loginData =
                     await LoginData.GetWithUsernameAsync(username);
 
+                (email, emailType) =
+                    await Person.GetEmailWithUsername(username);
+
                 if (loginData == null || loginData == null ||
-                    firstName == null || lastName == null || address == null)
+                    firstName == null || lastName == null || address == null ||
+                    email == null)
                     throw new InvalidUserException("Invalid data");
 
                 list.Add(new Admin(firstName, lastName, gender, birthDate, nif,
-                                   address, email, loginData));
+                                   address, email, (EmailType)emailType,
+                                   loginData));
             }
             return list;
         }

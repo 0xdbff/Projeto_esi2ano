@@ -38,8 +38,9 @@ internal sealed class Invoice : Payment
     /// <param name="cc"> credit card </param>
     /// <param name="month"> month </param>
     /// <returns> An instance of invoice</returns>
-    public static async Task<Invoice?> GetAsync(PaymentType type, double amount,
-                                                CreditCard? cc, DateOnly month)
+    public static async Task<Invoice?> GetAsync(Client client, PaymentType type,
+                                                double amount, CreditCard? cc,
+                                                DateOnly month)
     {
         var invoice = new Invoice(type, amount, cc);
         invoice.Month = month;
@@ -48,6 +49,8 @@ internal sealed class Invoice : Payment
 
         if (invoice.Status == PaymentStatus.Expired)
             return null;
+
+        await invoice.GenerateInvoicePdf(client);
 
         return invoice;
     }
@@ -64,7 +67,7 @@ internal sealed class Invoice : Payment
     /// <summary>
     ///     Clean up files after tex Compilation.
     /// </summary>
-    private static void CleanUp()
+    private static void CleanUp(string src)
     {
         try
         {
@@ -72,6 +75,7 @@ internal sealed class Invoice : Payment
 
             // Unix style.
             cleanScript.StartInfo.FileName = $"{invoiceSrcPath}/src/cleanScript.sh";
+            cleanScript.StartInfo.Arguments = $"{src}";
             cleanScript.StartInfo.CreateNoWindow = true;
             cleanScript.StartInfo.RedirectStandardOutput = true;
             cleanScript.Start();
@@ -85,26 +89,25 @@ internal sealed class Invoice : Payment
     /// <summary>
     ///     Generate Invoice for a client.
     /// </summary>
-    public static async Task GenerateInvoicePdf(Client client)
+    private async Task GenerateInvoicePdf(Client client)
     {
         //! TODO make it async.
         try
         {
-            string texSrc = await GenInvoiceSrc(client);
+            var (src, texSrc, hash) = await GenInvoiceSrc(client);
 
             using var pdfGen = new Process();
 
             // Unix style.
             pdfGen.StartInfo.FileName = "pdflatex";
-            pdfGen.StartInfo.Arguments =
-                $"-output-directory={invoiceSrcPath}/December_2022 {texSrc}";
+            pdfGen.StartInfo.Arguments = $"-output-directory={src} {texSrc}";
             pdfGen.StartInfo.CreateNoWindow = true;
             pdfGen.StartInfo.RedirectStandardOutput = true;
             pdfGen.Start();
 
             await pdfGen.WaitForExitAsync();
 
-            CleanUp();
+            CleanUp(hash);
         }
         catch (Exception e)
         {
@@ -118,9 +121,10 @@ internal sealed class Invoice : Payment
     /// <param name="client"> An instance of a client </param>
     /// <returns> a string with the path for compilation </returns>
     /// <exception cref="Exception"></exception>
-    private static async Task<string> GenInvoiceSrc(Client client)
+    private static async Task<(string, string, string)>
+    GenInvoiceSrc(Client client)
     {
-        if (client.subscription == null)
+        if (client.Subscription == null)
             throw new Exception("Invalid client");
 
         var address = $@"NIF-{client.Nif}\\{client.Address.ToStringLatex()}";
@@ -139,7 +143,7 @@ internal sealed class Invoice : Payment
         {
             taxRate = (0).ToString();
 
-            price = (client.subscription.Type == SubscriptionPlan.Standart)
+            price = (client.Subscription.Type == SubscriptionPlan.Standart)
                         ? (8.22).ToString()
                         : (16.86).ToString();
         }
@@ -147,14 +151,15 @@ internal sealed class Invoice : Payment
         {
             taxRate = (23).ToString();
 
-            price = (client.subscription.Type == SubscriptionPlan.Standart)
+            price = (client.Subscription.Type == SubscriptionPlan.Standart)
                         ? (8.22 * 1.8).ToString()
                         : (16.86 * 1.8).ToString();
         }
         else
             throw new Exception("Invalid client");
 
-        var product = $"Subscription IpcaGym {client.subscription.Type} ({client.ClientType}), {month}";
+        var product =
+            $"Subscription IpcaGym {client.Subscription.Type} ({client.ClientType}), {month}";
 
         //! TODO optimize.
         var invoiceSrc = texSrc.Replace("TAXRATE", taxRate);
@@ -168,18 +173,21 @@ internal sealed class Invoice : Payment
 
         month = month.Replace(' ', '_');
 
-        Console.WriteLine(product + " " + price);
+        Log.Info(product + " " + price);
 
         string dir = $"{invoiceSrcPath}/{month}";
 
         Directory.CreateDirectory(dir);
-        dir += $"/{SHA512(DateTime.Now.ToString() + client.Nif)}.tex";
 
-        Console.WriteLine(dir);
-        
-        await WriteTextAsync(dir, invoiceSrc);
+        var hash = $"{SHA512(DateTime.Now.ToString() + client.Nif)}";
 
-        return dir;
+        var srcdir = dir + "/" + hash + ".tex";
+
+        Log.Info(dir);
+
+        await WriteTextAsync(srcdir, invoiceSrc);
+
+        return (dir, srcdir, hash);
     }
 
     #region texCode

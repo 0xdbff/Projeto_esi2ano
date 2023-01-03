@@ -95,9 +95,9 @@ internal class Subscription
     /// <param name="type"> type </param>
     /// <param name="cc">credit card </param>
     /// <returns></returns>
-    public async Task<Invoice?> GenerateInvoiceForCurrentMonth(PaymentType type,
+    public async Task<Invoice?> GenerateInvoiceForCurrentMonth(Client client, PaymentType type,
                                                                CreditCard? cc) =>
-        await Invoice.GetAsync(type, 2.2, cc,
+        await Invoice.GetAsync(client, type, 2.2, cc,
                                DateOnly.FromDateTime(new DateTime(
                                    DateTime.Now.Year, DateTime.Now.Month, 1)));
 }

@@ -82,17 +82,24 @@ internal sealed class CreditCard
         CreditCardType = creditCardType;
     }
 
+    public static CreditCard GenExample() => new CreditCard(233324244,
+                                                     DateTime.Now.AddYears(4),
+                                                     DateTime.Now, "333",
+                                                     "example owner",
+                                                     CcType.Visa);
+
     /// <summary>
     ///     Insert Credit card to database.
     /// </summary>
     /// <param name="clientId">Client id</param>
     /// <param name="cc"> Credit card </param>
     /// <returns> And awaitable Tsk </returns>
-    private static async Task<int>
-    InsertCreditCardToDbAsync(Guid clientId, CreditCard cc) => await CmdExecuteNonQueryAsync(
-        $"INSERT into creditcard (CcNum, ClientId, ExpiryDate, SecurityCode, NameInCC)" +
-        $"WITH VALUES ({cc.CcNum}, {clientId}, {cc.ExpiryDate},{cc.InsertedDate},{cc.CcName}," +
-        $"{cc.CreditCardType})");
+    private static async Task<int> InsertCreditCardToDbAsync(Guid clientId,
+                                                             CreditCard cc) =>
+        await CmdExecuteNonQueryAsync(
+            $"INSERT into creditcard (CcNum, ClientId, ExpiryDate, SecurityCode, NameInCC)" +
+            $"WITH VALUES ({cc.CcNum}, {clientId}, {cc.ExpiryDate},{cc.InsertedDate},{cc.CcName}," +
+            $"{cc.CreditCardType})");
 
     /// <summary>
     ///     SIMULATED CODE, to verify credit card is valid.
@@ -101,8 +108,7 @@ internal sealed class CreditCard
     private static async Task<CcType> SomeBankingServiceToVerifyCc() =>
         //! TODO Some async method to verify credit card data,
         // outside the scope of our server.
-        await Task<CcType>.Run( () => CcType.Visa);
-    
+        await Task<CcType>.Run(() => CcType.Visa);
 
     /// <summary>
     ///     Insert Credit card to database
@@ -113,7 +119,7 @@ internal sealed class CreditCard
     /// <exception cref="DbInvalidDataException"> invalid data</exception>
     /// <exception cref="DuplicatePkException">duplicated </exception>
     internal static async Task<CcType> InsertCreditCardAsync(Guid clientId,
-                                                        CreditCard cc)
+                                                             CreditCard cc)
     {
         try
         {

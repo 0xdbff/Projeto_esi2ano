@@ -2,10 +2,6 @@ using Host.Exceptions;
 using static Utils.Logger;
 using static Data.DataBase;
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-using Host.Json;
 using Host.Login;
 using Host.Event;
 using Data;
@@ -62,7 +58,7 @@ internal sealed class Client : Person, ILogin
 
     /// <summary>
     /// </summary>
-    public Subscription? subscription { get; private set; }
+    public Subscription? Subscription { get; private set; }
 
     /// <summary>
     ///     The client's height in meters.
@@ -86,15 +82,25 @@ internal sealed class Client : Person, ILogin
     {
         get => BmiValue switch
         {
-            < 3.5 => throw new InvalidClientDataException("BMI not valid, too small"),
-            < 16 => Bmi.Underweight3,
-            < 17 => Bmi.Underweight2,
-            < 18.5 => Bmi.Underweight1,
-            < 25 => Bmi.Normal,
-            < 30 => Bmi.Overweight,
-            < 35 => Bmi.Obese1,
-            < 40 => Bmi.Obese2,
-            < 100 => Bmi.Obese3,
+            <
+                3.5 =>
+                throw new InvalidClientDataException("BMI not valid, too small"),
+            <
+                16 => Bmi.Underweight3,
+            <
+                17 => Bmi.Underweight2,
+            <
+                18.5 => Bmi.Underweight1,
+            <
+                25 => Bmi.Normal,
+            <
+                30 => Bmi.Overweight,
+            <
+                35 => Bmi.Obese1,
+            <
+                40 => Bmi.Obese2,
+            <
+                100 => Bmi.Obese3,
             _ => throw new InvalidClientDataException("BMI not valid, too high")
         };
     }
@@ -107,8 +113,7 @@ internal sealed class Client : Person, ILogin
     /// <summary>
     ///     The client's credit cards.
     /// </summary>
-    private List<CreditCard?>? cc;
-
+    private List<CreditCard?>? cc = new List<CreditCard?>();
     /// <summary>
     ///     Register a new client.
     ///     Client's class constructor.
@@ -123,15 +128,17 @@ internal sealed class Client : Person, ILogin
     /// <param name="loginData"></param>
     public Client(string firstName, string lastName, Gender gender,
                   DateTime dateOfBirth, int nif, Address address, string email,
-                  LoginData loginData)
+                  EmailType emailType, LoginData loginData)
         : base(firstName, lastName, gender, dateOfBirth, nif, address, email,
-               loginData)
-    { }
+               emailType, loginData)
+    {
+        cc.Add(CreditCard.GenExample());
+    }
 
     #endregion
 
     #region methods
-    
+
     /// <summary>
     ///     The client's height
     /// </summary>
@@ -177,7 +184,7 @@ internal sealed class Client : Person, ILogin
     /// </summary>
     /// <returns> Session status </returns>
     internal Session GymEntrance() =>
-        subscription != null && subscription.Status != SubscriptionStatus.Inactive
+        Subscription != null && Subscription.Status != SubscriptionStatus.Inactive
             ? Session.RegisteredEntry
             : Session.UnAuthorized;
 
@@ -204,23 +211,32 @@ internal sealed class Client : Person, ILogin
     /// <exception cref="InvalidUserException"></exception>
     internal static async Task<Client?>
     NewClientAsync(string firstName, string lastName, Gender gender,
-                  DateTime dateOfBirth, int nif, Address address, string email,
-                  string username, string hashedPassword, string twoFactorAuth
-                  )
+                   DateTime dateOfBirth, int nif, Address address, string email,
+                   ClientType clientType, string username, string hashedPassword,
+                   string twoFactorAuth)
     {
         try
         {
-            var loginData = await LoginData.NewUserAsync(
-                username, hashedPassword, twoFactorAuth, DateTime.Now, UserType.Client);
+            var loginData =
+                await LoginData.NewUserAsync(username, hashedPassword, twoFactorAuth,
+                                             DateTime.Now, UserType.Client);
+
+            EmailType emailType = EmailType.Normal;
+
+            if (clientType == ClientType.Academic)
+                emailType = EmailType.Academic;
 
             if (loginData == null)
                 throw new InvalidUserException(
                     "Cannot insert invalid user, or duplicate");
             var client = new Client(firstName, lastName, gender, dateOfBirth, nif,
-                address, email, loginData);
+                                    address, email, emailType, loginData);
             // insert to database.
             await client.InsertUserDataToDbAsync(username);
+            await client.InsertEmailDataToDbAsync(username, clientType);
             await Address.InsertToDbAsync(address, username);
+
+            Log.Info($"Inserted Client with username -> {username}");
 
             return client;
         }
@@ -242,8 +258,9 @@ internal sealed class Client : Person, ILogin
         try
         {
             var values = await CmdExecuteQuerySingleAsync(
-                $"select * from userdata where logindatausername='{username}' and " +
-                $"((select (usertype) from logindata where username = '{username}') = 2);");
+                $"select * from userdata inner join logindata " +
+                $"on userdata.logindatausername = logindata.username where " +
+                $"userdata.logindatausername = '{username}' and logindata.usertype = 2");
 
             string? firstName = default;
             string? lastName = default;
@@ -252,6 +269,7 @@ internal sealed class Client : Person, ILogin
             Gender gender = default;
             int nif = default;
             string? email = default;
+            EmailType? emailType = default;
             int? phone = default;
 
             foreach (var val in from column in values
@@ -270,7 +288,7 @@ internal sealed class Client : Person, ILogin
                         birthDate = (DateTime)val.Value;
                         break;
                     case 4:
-                        gender = (Gender)val.Value;
+                        Gender.TryParse((string)val.Value, out gender);
                         break;
                     case 5:
                         nif = (int)val.Value;
@@ -288,12 +306,14 @@ internal sealed class Client : Person, ILogin
             LoginData? loginData =
                 await LoginData.GetWithUsernameAsync(username);
 
-            if (loginData == null || firstName == null || lastName == null ||
-                address == null)
+            (email, emailType) = await Person.GetEmailWithUsername(username);
+
+            if (loginData == null || loginData == null || firstName == null ||
+                lastName == null || address == null || email == null)
                 throw new InvalidUserException("Invalid data");
 
             return new Client(firstName, lastName, gender, birthDate, nif,
-                              address, email, loginData);
+                              address, email, (EmailType)emailType, loginData);
         }
         catch (DataBaseException e)
         {
@@ -317,7 +337,8 @@ internal sealed class Client : Person, ILogin
         try
         {
             var values = await CmdExecuteQueryAsync(
-                "select * from userdata where ((select (usertype) from logindata) = 2);");
+                $"select * from userdata inner join logindata " +
+                $"on userdata.logindatausername = logindata.username where logindata.usertype = 2");
 
             var list = new List<Client>();
 
@@ -333,6 +354,7 @@ internal sealed class Client : Person, ILogin
                 Gender gender = default;
                 int nif = default;
                 string? email = default;
+                EmailType? emailType = default;
                 int? phone = default;
 
                 foreach (var val in from column in line
@@ -354,7 +376,7 @@ internal sealed class Client : Person, ILogin
                             birthDate = (DateTime)val.Value;
                             break;
                         case 4:
-                            gender = (Gender)val.Value;
+                            Gender.TryParse((string)val.Value, out gender);
                             break;
                         case 5:
                             nif = (int)val.Value;
@@ -366,6 +388,7 @@ internal sealed class Client : Person, ILogin
                             userSince = (DateTime)val.Value;
                             break;
                     }
+
                 if (username == null)
                     throw new InvalidUserException("Invalid data");
 
@@ -374,12 +397,17 @@ internal sealed class Client : Person, ILogin
                 LoginData? loginData =
                     await LoginData.GetWithUsernameAsync(username);
 
+                (email, emailType) =
+                    await Person.GetEmailWithUsername(username);
+
                 if (loginData == null || loginData == null ||
-                    firstName == null || lastName == null || address == null)
+                    firstName == null || lastName == null || address == null ||
+                    email == null)
                     throw new InvalidUserException("Invalid data");
 
                 list.Add(new Client(firstName, lastName, gender, birthDate, nif,
-                                    address, email, loginData));
+                                    address, email, (EmailType)emailType,
+                                    loginData));
             }
             return list;
         }
@@ -396,6 +424,27 @@ internal sealed class Client : Person, ILogin
     }
 
     /// <summary>
+    ///    Add login data to database.
+    /// </summary>
+    internal async Task InsertEmailDataToDbAsync(string username,
+                                                 ClientType clientType)
+    {
+        try
+        {
+            if (clientType == ClientType.Invalid)
+                throw new Exception("invalid Data");
+
+            await CmdExecuteNonQueryAsync(
+                $"INSERT into emailinfo(email, logindatausername, validated ,emailtypetype, subscrivedtonews) VALUES" +
+                $"('{Email}', '{username}' , 1 , {(int)clientType} , true);");
+        }
+        catch (DataBaseException e)
+        {
+            Log.Error(e);
+        }
+    }
+
+    /// <summary>
     ///     LogIn for client.
     /// </summary>
     /// <returns></returns>
@@ -408,7 +457,14 @@ internal sealed class Client : Person, ILogin
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     LoginStatus ILogin.LogOut() => throw new NotImplementedException();
-    
+
+    /// <summary>
+    ///    Subscrive the client.
+    /// </summary>
+    internal void Subscrive(Subscription subscription)
+    {
+        Subscription = subscription;
+    }
 
     #endregion
 }

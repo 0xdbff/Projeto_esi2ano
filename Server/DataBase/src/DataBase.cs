@@ -402,8 +402,6 @@ public static class DataBase
                 $"SELECT datname FROM pg_catalog.pg_database " +
                 $"WHERE lower(datname) = lower('{DbName}')");
 
-            Console.WriteLine(queryReturn);
-
             if (queryReturn == DbName.ToLower())
             {
                 // Ensure database tables.

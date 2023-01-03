@@ -20,7 +20,7 @@ internal enum UserType
 }
 
 /// <summary>
-///     Current logged situation for user 
+///     Current logged situation for user
 /// </summary>
 public enum LoginStatus
 {
@@ -131,18 +131,19 @@ internal class LoginData
     GetAllFromDb() => await CmdExecuteQueryAsync("SELECT * FROM logindata");
 
     private LoginData(string username, string hashedPassword,
-                      string twoFactorAuth, DateTime lastLogin, UserType userType)
+                      string twoFactorAuth, DateTime lastLogin,
+                      UserType userType)
     {
         Username = username;
         HashedPassword = hashedPassword;
         TwoFactorAuth = twoFactorAuth;
         LastLogin = lastLogin;
-        UserType = UserType;
+        UserType = userType;
     }
 
     /// <summary>
-    ///     Login data Constructor,  asynchronously adds the instance to the database
-    ///     after instantiation.
+    ///     Login data Constructor,  asynchronously adds the instance to the
+    ///     database after instantiation.
     /// </summary>
     /// <param name="username"> username </param>
     /// <param name="hashedPassword"> hashed password </param>
@@ -150,16 +151,14 @@ internal class LoginData
     /// <param name="lastLogin"> last login </param>
     /// <param name="userType"> user typpe</param>
     /// <returns></returns>
-    internal static async Task<LoginData?> NewUserAsync(string username,
-                                                        string hashedPassword,
-                                                        string twoFactorAuth,
-                                                        DateTime lastLogin,
-                                                        UserType userType)
+    internal static async Task<LoginData?>
+    NewUserAsync(string username, string hashedPassword, string twoFactorAuth,
+                 DateTime lastLogin, UserType userType)
     {
         try
         {
-            var newUser =
-                new LoginData(username, hashedPassword, twoFactorAuth, lastLogin, userType);
+            var newUser = new LoginData(username, hashedPassword, twoFactorAuth,
+                                        lastLogin, userType);
 
             // Insert to database.
             await newUser.InsertToDbAsync();
@@ -182,8 +181,8 @@ internal class LoginData
         try
         {
             await CmdExecuteNonQueryAsync(
-                $"INSERT into logindata(username, hashedpassword, lastlogin, usertype) VALUES" +
-                $"('{Username}', '{HashedPassword}' , (SELECT NOW()) , {((int)UserType)});");
+                $"INSERT into logindata(username, hashedpassword, twofactorauthapp ,lastlogin, usertype) VALUES" +
+                $"('{Username}', '{HashedPassword}' , '{TwoFactorAuth}', (SELECT NOW()) , {(int)UserType});");
         }
         catch (DataBaseException e)
         {

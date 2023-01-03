@@ -189,7 +189,7 @@ CREATE TABLE UserData (
   FirstName         varchar(255) NOT NULL, 
   LastName          varchar(255) NOT NULL, 
   BirthDate         timestamp with time zone NOT NULL, 
-  Gender            int4 NOT NULL, 
+  Gender            varchar(255) NOT NULL, 
   Nif               int4 NOT NULL, 
   phone             int4 NOT NULL, 
   UserSince         timestamp with time zone NOT NULL, 

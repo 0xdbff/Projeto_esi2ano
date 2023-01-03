@@ -5,6 +5,7 @@ using System.Text.Json;
 
 using static Data.DataBase;
 using static Utils.Logger;
+using static Utils.File;
 using Host.Json;
 
 /// <summary>
@@ -15,7 +16,7 @@ public sealed class Address
     /// <summary>
     ///     A unique code that identifies an address.
     /// </summary>
-    //!TODO cannot insert to database
+    //! TODO cannot insert to database
     public Guid? Code { get; private set; }
 
     /// <summary>
@@ -67,8 +68,7 @@ public sealed class Address
     /// <param name="address">address instance </param>
     /// <returns> a json string </returns>
     public static string? FromClassToJson(Address address) =>
-        JsonSerializer.Serialize(address,
-                                        AddressJsonContext.Default.Address);
+        JsonSerializer.Serialize(address, AddressJsonContext.Default.Address);
 
     /// <summary>
     ///     An address example.
@@ -132,8 +132,7 @@ public sealed class Address
         $"{Localidade}-{City}, {Country}\\\\" + "\n" +
         $"{PostalCode}, {AdditionalInfo} n{HouseNum} \\\\";
 
-
-    //!TODO remove static
+    //! TODO remove static
     /// <summary>
     ///     Insert address to Database.
     /// </summary>
@@ -214,15 +213,15 @@ public sealed class Address
             return default;
         }
     }
-    
+
     /// <summary>
     ///     Equals override
     /// </summary>
     /// <param name="obj"> An instance of an object</param>
     /// <returns> a boolean </returns>
     public override bool Equals(object? obj) => obj is Address
-        ? Code == ((Address)obj).Code
-        : false;
+                                                    ? Code == ((Address)obj).Code
+                                                    : false;
 
     /// <summary>
     ///     Get hash code override

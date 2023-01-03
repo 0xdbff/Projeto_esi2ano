@@ -18,9 +18,9 @@ internal class Trainer : Person, ILogin
     /// <param name="address"></param>
     public Trainer(string firstName, string lastName, Gender gender,
                    DateTime dateOfBirth, int nif, Address address, string email,
-                   LoginData loginData)
+                   EmailType emailType, LoginData loginData)
         : base(firstName, lastName, gender, dateOfBirth, nif, address, email,
-               loginData)
+               emailType, loginData)
     { }
 
     /// <summary>
